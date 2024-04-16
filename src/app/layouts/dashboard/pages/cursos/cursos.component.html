@@ -1,0 +1,47 @@
+<div class="d-flex justify-content-end mb-3">
+    <button (click)="openDialog()" mat-raised-button color="warn">
+      Crear Curso
+    </button>
+  </div>
+  
+  <table mat-table [dataSource]="cursos" class="mat-elevation-z8">
+    <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- No. Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef appTamano20>No.</th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+  
+    <!-- Nombre Column -->
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef appTamano20>Nombre</th>
+      <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+    </ng-container>
+  
+    <!-- Jornada Column -->
+    <ng-container matColumnDef="jornada">
+      <th mat-header-cell *matHeaderCellDef appTamano20>Jornada</th>
+      <td mat-cell *matCellDef="let element">{{ element.jornada }}</td>
+    </ng-container>
+  
+    <!-- Acciones Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef appTamano20>Acciones</th>
+      <td mat-cell *matCellDef="let element">
+        <button (click)="openDialog(element)" mat-icon-button color="primary">
+          <mat-icon>edit</mat-icon>
+        </button>
+  
+        <!-- *ngIf="userRoleSession === 'ADMIN'" -->
+        <button (click)="onDeleteCurso(element.id)" mat-icon-button color="warn">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  

@@ -1,0 +1,57 @@
+<mat-drawer-container class="example-container" autosize>
+    <!-- SIDEBAR -->
+    <mat-drawer
+      [opened]="!isMobile()"
+      #drawer
+      class="example-sidenav"
+      [mode]="isMobile() ? 'over' : 'side'"
+    >
+      <div class="d-flex justify-content-center p-2">
+        <img src="../../../assets/images/logo.png" alt="Logo Side" />
+      </div>
+      <div class="example-button-row d-flex row">
+        <button mat-raised-button routerLink="">Inicio</button>
+        <button mat-raised-button routerLink="/alumnos">Alumnos</button>
+        <button mat-raised-button routerLink="/cursos">Cursos</button>
+        <button mat-raised-button routerLink="/clases">Clases</button>
+      </div>
+    </mat-drawer>
+    <!-- SIDEBAR -->
+  
+    <!-- CONTENIDO A LA DERECHA DEL SIDEBAR -->
+    <div class="example-sidenav-content">
+      <!-- TOOLBAR SUPERIOR -->
+      <mat-toolbar
+        color="primary"
+        class="justify-content-between align-items-center"
+      >
+        <div class="d-flex align-items-center">
+          <button
+            (click)="drawer.toggle()"
+            mat-icon-button
+            class="example-icon"
+            aria-label="Example icon-button with menu icon"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
+          <span appTamano20>CoderHouse {{ titulo }}</span>
+        </div>
+        <div class="d-flex flex-column justify-content-center align-items-center">
+          <img
+            src="../../../assets/icons/login.png"
+            alt="Login toolbar"
+            class="login"
+          />
+          <p class="usuario">Reyes Luis (Admin)</p>
+        </div>
+      </mat-toolbar>
+  
+      <main style="padding: 1rem">
+        <router-outlet />
+      </main>
+  
+      <!-- TOOLBAR SUPERIOR -->
+    </div>
+    <!-- CONTENIDO A LA DERECHA DEL SIDEBAR -->
+  </mat-drawer-container>
+  

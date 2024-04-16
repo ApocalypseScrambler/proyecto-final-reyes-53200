@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Crear Curso</h2>
+<div mat-dialog-content>
+  <form [formGroup]="cursoForm">
+    <div class="row">
+      <div>
+        <mat-form-field class="w-100 p-2" appearance="fill">
+          <mat-label>Nombre</mat-label>
+          <input formControlName="nombre" matInput />
+          <mat-hint>El nombre debe tener al menos 4 caracteres</mat-hint>
+          <mat-error>{{
+            nombreControl?.errors | formFieldValidationErrors
+          }}</mat-error>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="w-100 p-2" appearance="fill">
+          <mat-label>Jornada</mat-label>
+          <mat-select formControlName="jornada">
+            @for (tipoJornada of tipoJornadas; track tipoJornada) {
+              <mat-option [value]="tipoJornada.value">{{tipoJornada.viewValue}}</mat-option>
+            }
+          </mat-select>
+          <mat-error>{{
+            jornadaControl?.errors | formFieldValidationErrors
+          }}</mat-error>
+        </mat-form-field>
+      </div>
+      
+    </div>
+  </form>
+</div>
+
+<div class="d-flex justify-content-end" mat-dialog-actions>
+  <button mat-dialog-close mat-button>Cancelar</button>
+  <button (click)="onSave()" mat-button>Guardar</button>
+</div>
