@@ -1,1 +1,74 @@
-<p>usuarios works!</p>
+<div class="d-flex justify-content-end mb-3">
+  <button (click)="openDialog()" mat-raised-button color="warn">
+    Crear Curso
+  </button>
+</div>
+
+<table mat-table [dataSource]="usuarios" class="mat-elevation-z8">
+  <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- No. Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef appTamano20>No.</th>
+    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+  </ng-container>
+
+  <!-- Usuario Column -->
+  <ng-container matColumnDef="usuario">
+    <th mat-header-cell *matHeaderCellDef appTamano20>Usuario</th>
+    <td mat-cell *matCellDef="let element">{{ element.usuario }}</td>
+  </ng-container>
+
+  <!-- Password Column -->
+  <ng-container matColumnDef="password">
+    <th mat-header-cell *matHeaderCellDef appTamano20>Password</th>
+    <td mat-cell *matCellDef="let element">{{ element.password }}</td>
+  </ng-container>
+
+  <!-- Email Column -->
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef appTamano20>Email</th>
+    <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+  </ng-container>
+
+  <!-- Rol Column -->
+  <ng-container matColumnDef="rol">
+    <th mat-header-cell *matHeaderCellDef appTamano20>Rol</th>
+    <td mat-cell *matCellDef="let element">{{ element.rol }}</td>
+  </ng-container>
+
+  <!-- Fecha Creación Column -->
+  <ng-container matColumnDef="fecha_creacion">
+    <th mat-header-cell *matHeaderCellDef appTamano20>Fecha Creación</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.fecha_creacion | date : "dd/MM/yyyy" }}
+    </td>
+  </ng-container>
+
+  <!-- Fecha Modificación Column -->
+  <ng-container matColumnDef="fecha_modificacion">
+    <th mat-header-cell *matHeaderCellDef appTamano20>Fecha Ultima Modificación</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.fecha_modificacion | date : "dd/MM/yyyy" }}
+    </td>
+  </ng-container>
+
+  <!-- Acciones Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef appTamano20>Acciones</th>
+    <td mat-cell *matCellDef="let element">
+      <button (click)="openDialog(element)" mat-icon-button color="primary">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <!-- *ngIf="userRoleSession === 'ADMIN'" -->
+      <button (click)="onDeleteCurso(element.id)" mat-icon-button color="warn">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

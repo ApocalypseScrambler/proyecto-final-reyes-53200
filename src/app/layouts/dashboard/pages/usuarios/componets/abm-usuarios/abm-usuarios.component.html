@@ -1,1 +1,51 @@
-<p>abm-usuarios works!</p>
+<h2 mat-dialog-title>Crear Curso</h2>
+<div mat-dialog-content>
+  <form [formGroup]="usuarioForm">
+    <div class="row">
+      <div class="col-6">
+        <mat-form-field class="w-100 p-2" appearance="fill">
+          <mat-label>Usuario</mat-label>
+          <input formControlName="usuario" matInput />
+          <mat-hint>El usuario debe tener 10 caracteres</mat-hint>
+          <mat-error>{{
+            usuarioControl?.errors | formFieldValidationErrors
+          }}</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-6">
+        <mat-form-field class="w-100 p-2" appearance="fill">
+          <mat-label>Password</mat-label>
+          <input formControlName="password" matInput />
+          <mat-hint>El password debe tener mínimo 8 caracteres y máximo 15</mat-hint>
+          <mat-error>{{
+            passwordControl?.errors | formFieldValidationErrors
+          }}</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-10">
+        <mat-form-field class="w-100 p-2" appearance="fill">
+          <mat-label>Email</mat-label>
+          <input formControlName="email" matInput />
+          <mat-error>{{
+            emailControl?.errors | formFieldValidationErrors
+          }}</mat-error>
+        </mat-form-field>
+      </div>      
+      <div class="col-2">
+        <mat-form-field class="w-100 p-2" appearance="fill">
+          <mat-label>Rol</mat-label>
+          <mat-select formControlName="rol">
+            <mat-option value="ADMIN">ADMIN</mat-option>
+            <mat-option value="USER">USER</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      
+    </div>
+  </form>
+</div>
+
+<div class="d-flex justify-content-end" mat-dialog-actions>
+  <button mat-dialog-close mat-button>Cancelar</button>
+  <button (click)="onSave()" mat-button>Guardar</button>
+</div>

@@ -1,6 +1,6 @@
 export type UsuarioRol = 'ADMIN' | 'USER';
 
-export interface IUser {
+export interface IUsuario {
   id: number;
   usuario: string;
   password: string;
