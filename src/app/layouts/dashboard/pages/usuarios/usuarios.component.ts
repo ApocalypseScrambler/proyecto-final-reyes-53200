@@ -1,14 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IUsuario } from './models'
 import { MatDialog } from '@angular/material/dialog';
 import { AbmUsuariosComponent } from './componets/abm-usuarios/abm-usuarios.component';
+import { UsuariosService } from '../../../../core/services/usuarios.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.scss'
 })
-export class UsuariosComponent {
+export class UsuariosComponent implements OnInit{
   displayedColumns: string[] = [
     'id',
     'usuario',
@@ -20,28 +23,23 @@ export class UsuariosComponent {
     'actions'
   ];
 
-  usuarios: IUsuario[] = [
-    {
-      id: 1,
-      usuario: 'User1',
-      password: 'contraseña123',
-      email: 'correo@mail.com',
-      rol: 'ADMIN',
-      fecha_creacion: new Date('09/08/2021'),
-      fecha_modificacion: new Date('09/08/2021'),
-    },  
-    {
-      id: 2,
-      usuario: 'User2',
-      password: 'contraseña456',
-      email: 'correo@mail.com',
-      rol: 'USER',
-      fecha_creacion: new Date('09/08/2021'),
-      fecha_modificacion: new Date('09/08/2021'),
-    },      
-  ];
+  userData: Subscription =  new Subscription();
+  usuarios: IUsuario[] = [];
+  isAdmin: boolean = false;
 
-  constructor(private matDialog: MatDialog) {}
+  ngOnInit(): void {
+    this.usuariosService.getUsuarios().subscribe(data => {
+      this.usuarios = data;
+    });
+  }
+
+  constructor(private usuariosService: UsuariosService, private matDialog: MatDialog, private authService: AuthService) {
+    this.userData = this.authService.getUserData().subscribe(userData => {
+      if (userData.rol === 'ADMIN') {
+        this.isAdmin = true;
+      }
+    });
+  }
 
   openDialog(editingUser?: IUsuario): void {
     this.matDialog
@@ -71,7 +69,7 @@ export class UsuariosComponent {
       });
   }
 
-  onDeleteCurso(id: number): void {
+  onDeleteUsuario(id: number): void {
     if (confirm('Esta seguro?')) {
       this.usuarios = this.usuarios.filter((u) => u.id != id);
     }

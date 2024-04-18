@@ -1,33 +1,40 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private isAuthenticated: boolean = false;
   private isAdmin: boolean = false;
+  private isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private userDataSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  login(usuario: string, password: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      
-      setTimeout(() => {
-        if (usuario === 'usuario' && password === 'contraseña') {
-          this.isAuthenticated = true;
-          resolve(true); // Inicio de sesión exitoso
-        } else {
-          this.isAuthenticated = false;
-          reject('Credenciales inválidas'); // Inicio de sesión fallido
-        }
-      }, 1000); // Simulamos una demora de 1 segundo
-    });
+  constructor(private router: Router) { }
+
+  login(username: string, password: string): Observable<boolean> {
+    const isAuthenticated = (username === 'user' && password === 'pass') || (username === 'admin' && password === 'pass');
+    if (username === "admin") {
+      this.isAdmin = true
+    }
+    this.isLoggedInSubject.next(isAuthenticated);
+    const userData = { usuario: username, rol: this.isAdmin ? 'ADMIN' : 'USER' };
+    this.userDataSubject.next(userData);
+
+    return this.isLoggedInSubject.asObservable();
+  }
+
+  getUserData(): Observable<any> {
+    return this.userDataSubject.asObservable();
   }
 
   logout(): void {
-    this.isAuthenticated = false;
+    this.isLoggedInSubject.next(false);
+    this.router.navigate(['']);
   }
 
-  isLoggedIn(): boolean {
-    return this.isAuthenticated;
+  isLoggedIn(): Observable<boolean> {
+    return this.isLoggedInSubject.asObservable();
   }
 }

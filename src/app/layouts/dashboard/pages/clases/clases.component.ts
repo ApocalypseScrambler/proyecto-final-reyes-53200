@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { IClase } from './models';
 import { MatDialog } from '@angular/material/dialog';
 import { AbmClasesComponent } from './components/abm-clases/abm-clases.component';
-
+import { AuthService } from '../../../../core/services/auth.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-clases',
   templateUrl: './clases.component.html',
@@ -18,6 +19,9 @@ export class ClasesComponent {
     'horarioFin',
     'actions',
   ];
+
+  userData: Subscription =  new Subscription();
+  isAdmin: boolean = false;
 
   clases: IClase[] = [
     {
@@ -78,7 +82,13 @@ export class ClasesComponent {
     },
   ];
 
-  constructor(private matDialog: MatDialog) {}
+  constructor(private matDialog: MatDialog, private authService: AuthService) {
+    this.userData = this.authService.getUserData().subscribe(userData => {
+      if (userData.rol === 'ADMIN') {
+        this.isAdmin = true;
+      }
+    });
+  }
 
   openDialog(editingUser?: IClase): void {
     this.matDialog

@@ -13,7 +13,7 @@ import { HomeModule } from './pages/home/home.module';
 import { CursosModule } from './pages/cursos/cursos.module';
 import { ClasesModule } from './pages/clases/clases.module';
 import { UsuariosModule } from './pages/usuarios/usuarios.module';
-
+import { LoginModule } from '../login/login.module';
 @NgModule({
   declarations: [
     DashboardComponent
@@ -29,7 +29,8 @@ import { UsuariosModule } from './pages/usuarios/usuarios.module';
     HomeModule,
     CursosModule,
     ClasesModule,
-    UsuariosModule
+    UsuariosModule,
+    LoginModule
   ],
   exports: [DashboardComponent]
 })

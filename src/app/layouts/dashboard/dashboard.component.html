@@ -1,4 +1,5 @@
-<mat-drawer-container class="example-container" autosize>
+<div *ngIf="isAuthenticated">
+  <mat-drawer-container class="example-container" autosize>
     <!-- SIDEBAR -->
     <mat-drawer
       [opened]="!isMobile()"
@@ -14,12 +15,20 @@
         <button mat-raised-button routerLink="/alumnos">Alumnos</button>
         <button mat-raised-button routerLink="/cursos">Cursos</button>
         <button mat-raised-button routerLink="/clases">Clases</button>
-        <button  mat-raised-button routerLink="/usuarios">Usuarios</button>
+        <button mat-raised-button routerLink="/usuarios">Usuarios</button>
         <!-- *ngIf="userRoleSession === 'ADMIN'" -->
+        <button
+          *ngIf="isAuthenticated"
+          mat-raised-button
+          color="warn"
+          (click)="logout()"
+        >
+          Cerrar Sesión
+        </button>
       </div>
     </mat-drawer>
     <!-- SIDEBAR -->
-  
+
     <!-- CONTENIDO A LA DERECHA DEL SIDEBAR -->
     <div class="example-sidenav-content">
       <!-- TOOLBAR SUPERIOR -->
@@ -38,22 +47,29 @@
           </button>
           <span appTamano20>CoderHouse {{ titulo }}</span>
         </div>
-        <div class="d-flex flex-column justify-content-center align-items-center">
+        <div
+          class="d-flex flex-column justify-content-center align-items-center"
+        >
           <img
             src="../../../assets/icons/login.png"
             alt="Login toolbar"
             class="login"
           />
-          <p class="usuario">Reyes Luis (Admin)</p>
+          <div *ngIf="userData$ | async as userData">
+            <p class="usuario">{{ userData.usuario }} ({{ userData.rol }})</p>
+          </div>
         </div>
       </mat-toolbar>
-  
+
       <main style="padding: 1rem">
         <router-outlet />
       </main>
-  
+
       <!-- TOOLBAR SUPERIOR -->
     </div>
     <!-- CONTENIDO A LA DERECHA DEL SIDEBAR -->
   </mat-drawer-container>
-  
+</div>
+<div *ngIf="!isAuthenticated">
+  <app-login></app-login>
+</div>

@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { ICurso } from './models'
 import { MatDialog } from '@angular/material/dialog';
 import { AbmCursosComponent } from './components/abm-cursos/abm-cursos.component';
-
+import { AuthService } from '../../../../core/services/auth.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-cursos',
   templateUrl: './cursos.component.html',
@@ -15,6 +16,9 @@ export class CursosComponent {
     'jornada',
     'actions'
   ];
+
+  userData: Subscription =  new Subscription();
+  isAdmin: boolean = false;
 
   cursos: ICurso[] = [
     {
@@ -44,7 +48,13 @@ export class CursosComponent {
     },
   ];
 
-  constructor(private matDialog: MatDialog) {}
+  constructor(private matDialog: MatDialog, private authService: AuthService) {
+    this.userData = this.authService.getUserData().subscribe(userData => {
+      if (userData.rol === 'ADMIN') {
+        this.isAdmin = true;
+      }
+    });
+  }
 
   openDialog(editingUser?: ICurso): void {
     this.matDialog
