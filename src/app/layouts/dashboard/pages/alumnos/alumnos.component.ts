@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
-import { IAlumno } from './models'
+import { IAlumno } from './models';
 import { MatDialog } from '@angular/material/dialog';
 import { AbmAlumnosComponent } from './components/abm-alumnos/abm-alumnos.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-alumnos',
   templateUrl: './alumnos.component.html',
-  styleUrl: './alumnos.component.scss'
+  styleUrl: './alumnos.component.scss',
 })
 export class AlumnosComponent {
   displayedColumns: string[] = [
@@ -16,10 +17,10 @@ export class AlumnosComponent {
     'nombrecompleto',
     'edad',
     'correo',
-    'actions'
+    'actions',
   ];
 
-  userData: Subscription =  new Subscription();
+  userData: Subscription = new Subscription();
   isAdmin: boolean = false;
 
   alumnos: IAlumno[] = [
@@ -61,7 +62,7 @@ export class AlumnosComponent {
   ];
 
   constructor(private matDialog: MatDialog, private authService: AuthService) {
-    this.userData = this.authService.getUserData().subscribe(userData => {
+    this.userData = this.authService.getUserData().subscribe((userData) => {
       if (userData.rol === 'ADMIN') {
         this.isAdmin = true;
       }
@@ -84,7 +85,9 @@ export class AlumnosComponent {
               );
             } else {
               // Generamos  un ID único para el nuevo usuario y lo añadimos al array
-              const maxId = Math.max(...this.alumnos.map(alumno => alumno.id));
+              const maxId = Math.max(
+                ...this.alumnos.map((alumno) => alumno.id)
+              );
               result.id = maxId + 1;
               this.alumnos = [...this.alumnos, result];
             }
@@ -94,8 +97,26 @@ export class AlumnosComponent {
   }
 
   onDeleteAlumno(id: number): void {
-    if (confirm('Esta seguro?')) {
-      this.alumnos = this.alumnos.filter((u) => u.id != id);
-    }
+    Swal.fire({
+      title: "Esta seguro de eliminar el alumno?",
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.alumnos = this.alumnos.filter((u) => u.id != id);
+        Swal.fire({
+          title: "Alumno eliminado",
+          icon: "success"
+        });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        Swal.fire({
+          title: "Petición Cancelada",
+          icon: "error"
+        });
+      }
+    });
   }
 }
+

@@ -5,6 +5,7 @@ import { AbmUsuariosComponent } from './componets/abm-usuarios/abm-usuarios.comp
 import { UsuariosService } from '../../../../core/services/usuarios.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-usuarios',
@@ -70,8 +71,25 @@ export class UsuariosComponent implements OnInit{
   }
 
   onDeleteUsuario(id: number): void {
-    if (confirm('Esta seguro?')) {
-      this.usuarios = this.usuarios.filter((u) => u.id != id);
-    }
+    Swal.fire({
+      title: "Esta seguro de eliminar el usuario?",
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.usuarios = this.usuarios.filter((u) => u.id != id);
+        Swal.fire({
+          title: "Usuario eliminado",
+          icon: "success"
+        });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        Swal.fire({
+          title: "Petición Cancelada",
+          icon: "error"
+        });
+      }
+    });
   }
 }

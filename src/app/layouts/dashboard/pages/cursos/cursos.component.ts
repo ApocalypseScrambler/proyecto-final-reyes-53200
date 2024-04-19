@@ -4,6 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AbmCursosComponent } from './components/abm-cursos/abm-cursos.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-cursos',
   templateUrl: './cursos.component.html',
@@ -82,8 +84,25 @@ export class CursosComponent {
   }
 
   onDeleteCurso(id: number): void {
-    if (confirm('Esta seguro?')) {
-      this.cursos = this.cursos.filter((u) => u.id != id);
-    }
+    Swal.fire({
+      title: "Esta seguro de eliminar el curso?",
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.cursos = this.cursos.filter((u) => u.id != id);
+        Swal.fire({
+          title: "Curso eliminado",
+          icon: "success"
+        });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        Swal.fire({
+          title: "Petición Cancelada",
+          icon: "error"
+        });
+      }
+    });
   }
 }
