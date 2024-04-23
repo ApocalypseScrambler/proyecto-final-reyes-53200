@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ICurso } from './models'
 import { MatDialog } from '@angular/material/dialog';
 import { AbmCursosComponent } from './components/abm-cursos/abm-cursos.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { CursosService } from './services/cursos.service';
 
 @Component({
   selector: 'app-cursos',
   templateUrl: './cursos.component.html',
   styleUrl: './cursos.component.scss'
 })
-export class CursosComponent {
+export class CursosComponent implements OnInit{
   displayedColumns: string[] = [
     'id',
     'nombre',
@@ -20,41 +21,30 @@ export class CursosComponent {
   ];
 
   userData: Subscription =  new Subscription();
+  cursos: ICurso[] = [];
   isAdmin: boolean = false;
 
-  cursos: ICurso[] = [
-    {
-      id: 1,
-      nombre: 'Desarrollo Web',
-      jornada: 'Noche',
-    },
-    {
-      id: 2,
-      nombre: 'JavaScript',
-      jornada: 'Tarde',
-    },
-    {
-      id: 3,
-      nombre: 'Data Science',
-      jornada: 'Tarde',
-    },
-    {
-      id: 4,
-      nombre: 'Machine Learning',
-      jornada: 'Mañana',
-    },
-    {
-      id: 5,
-      nombre: 'Data Analytics',
-      jornada: 'Noche',
-    },
-  ];
+  constructor(
+    private cursosService: CursosService,
+    private matDialog: MatDialog,
+    private authService: AuthService
+  ) {}
 
-  constructor(private matDialog: MatDialog, private authService: AuthService) {
-    this.userData = this.authService.getUserData().subscribe(userData => {
+  ngOnInit(): void {
+    this.userData = this.authService.getUserData().subscribe((userData) => {
       if (userData.rol === 'ADMIN') {
         this.isAdmin = true;
       }
+    });
+
+    this.getCursos();
+  }
+
+  getCursos(): void {
+    this.cursosService.getCursos().subscribe({
+      next: (data) => {
+        this.cursos = data;
+      },
     });
   }
 
@@ -68,41 +58,49 @@ export class CursosComponent {
         next: (result) => {
           if (result) {
             if (editingUser) {
-              // Actualizamos el alumno existente en la lista
-              this.cursos = this.cursos.map((u) =>
-                u.id === editingUser.id ? { ...u, ...result } : u
-              );
+              this.cursosService.updateCurso(editingUser.id, result).subscribe({
+                next: (data) => {
+                  this.cursos = data;
+                },
+                complete() {},
+              });
             } else {
-              // Generamos  un ID único para el nuevo usuario y lo añadimos al array
-              const maxId = Math.max(...this.cursos.map(curso => curso.id));
-              result.id = maxId + 1;
-              this.cursos = [...this.cursos, result];
+              this.cursosService.createUsuario(result).subscribe({
+                next: (data) => {
+                  this.cursos = data;
+                },
+                complete() {},
+              });
             }
           }
-        },
-      });
-  }
+        }
+      })
+  };    
 
   onDeleteCurso(id: number): void {
     Swal.fire({
-      title: "Esta seguro de eliminar el curso?",
-      icon: "warning",
+      title: '¿Está seguro de eliminar el curso?',
+      icon: 'warning',
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        this.cursos = this.cursos.filter((u) => u.id != id);
-        Swal.fire({
-          title: "Curso eliminado",
-          icon: "success"
+        this.cursosService.deleteCurso(id).subscribe((data) => {
+          Swal.fire({
+            title: 'Curso eliminado',
+            icon: 'success',
+          });
+          this.cursos = data;
         });
-      } else if (
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire({
-          title: "Petición Cancelada",
-          icon: "error"
+          title: 'Petición Cancelada',
+          icon: 'error',
         });
       }
     });
+  }
+
+    ngOnDestroy(): void {
+    this.userData.unsubscribe();
   }
 }

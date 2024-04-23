@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-
+import { UsuariosService } from '../../layouts/dashboard/pages/usuarios/services/usuarios.service';
+import { IUsuario } from '../../layouts/dashboard/pages/usuarios/models';
 @Injectable({
   providedIn: 'root'
 })
@@ -10,14 +11,28 @@ export class AuthService {
   private isAdmin: boolean = false;
   private isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private userDataSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private usuarios: IUsuario[] = [];
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private usuariosService: UsuariosService
+  ) { }
+  
+  obtenerUsuarios(): void {
+    this.usuariosService.getUsuarios().subscribe({
+      next: (data) => {
+        this.usuarios = data;
+      },
+    });
+  }
 
   login(username: string, password: string): Observable<boolean> {
-    const isAuthenticated = (username === 'user' && password === 'pass') || (username === 'admin' && password === 'pass');
-    if (username === "admin") {
-      this.isAdmin = true
-    }
+    this.obtenerUsuarios();
+    const isAuthenticated = this.usuarios.some((usuario) => usuario.usuario === username && usuario.password === password);
+    
+    const adminUser = this.usuarios.find((usuario) => usuario.usuario === username && usuario.rol === 'ADMIN');
+    this.isAdmin = adminUser !== undefined;
+
     this.isLoggedInSubject.next(isAuthenticated);
     const userData = { usuario: username, rol: this.isAdmin ? 'ADMIN' : 'USER' };
     this.userDataSubject.next(userData);

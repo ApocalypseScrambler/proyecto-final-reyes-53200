@@ -30,9 +30,11 @@ export class AbmUsuariosComponent {
         '',
         [
           Validators.required, 
-          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$')],
+          Validators.pattern('^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$'),
+          //Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$'),
           Validators.minLength(8),
           Validators.maxLength(15),
+        ],
       ],
       email: [
         '',
