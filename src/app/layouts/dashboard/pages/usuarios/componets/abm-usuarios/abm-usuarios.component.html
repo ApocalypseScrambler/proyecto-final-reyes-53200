@@ -16,7 +16,7 @@
         <mat-form-field class="w-100 p-2" appearance="fill">
           <mat-label>Password</mat-label>
           <input formControlName="password" matInput />
-          <mat-hint>El password debe tener mínimo 8 caracteres y máximo 15</mat-hint>
+          <mat-hint>El password debe tener 8 caracteres, una letra minúscula, una letra mayúscula, un número y un caracter especial mínimamente.</mat-hint>
           <mat-error>{{
             passwordControl?.errors | formFieldValidationErrors
           }}</mat-error>

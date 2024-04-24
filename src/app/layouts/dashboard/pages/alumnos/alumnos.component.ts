@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AbmAlumnosComponent } from './components/abm-alumnos/abm-alumnos.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Subscription } from 'rxjs';
+import { AlumnosService } from './services/alumnos.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,102 +22,90 @@ export class AlumnosComponent {
   ];
 
   userData: Subscription = new Subscription();
+  alumnos: IAlumno[] = [];
   isAdmin: boolean = false;
 
-  alumnos: IAlumno[] = [
-    {
-      id: 1,
-      nombre: 'Juan',
-      apellido: 'Pérez',
-      edad: 28,
-      correo: 'juanperez@example.com',
-    },
-    {
-      id: 2,
-      nombre: 'María',
-      apellido: 'Gómez',
-      edad: 25,
-      correo: 'mariagomez@example.com',
-    },
-    {
-      id: 3,
-      nombre: 'Carlos',
-      apellido: 'Sánchez',
-      edad: 30,
-      correo: 'carlossanchez@example.com',
-    },
-    {
-      id: 4,
-      nombre: 'Laura',
-      apellido: 'Rodríguez',
-      edad: 22,
-      correo: 'laurarodriguez@example.com',
-    },
-    {
-      id: 5,
-      nombre: 'Pedro',
-      apellido: 'Martínez',
-      edad: 24,
-      correo: 'pedromartinez@example.com',
-    },
-  ];
+  
 
-  constructor(private matDialog: MatDialog, private authService: AuthService) {
-    this.userData = this.authService.getUserData().subscribe((userData) => {
-      if (userData.rol === 'ADMIN') {
-        this.isAdmin = true;
-      }
-    });
-  }
+  constructor(
+    private matDialog: MatDialog, 
+    private authService: AuthService,
+    private alumnosService: AlumnosService) {}
 
-  openDialog(editingUser?: IAlumno): void {
-    this.matDialog
-      .open(AbmAlumnosComponent, {
-        data: editingUser,
-      })
-      .afterClosed()
-      .subscribe({
-        next: (result) => {
-          if (result) {
-            if (editingUser) {
-              // Actualizamos el alumno existente en la lista
-              this.alumnos = this.alumnos.map((u) =>
-                u.id === editingUser.id ? { ...u, ...result } : u
-              );
-            } else {
-              // Generamos  un ID único para el nuevo usuario y lo añadimos al array
-              const maxId = Math.max(
-                ...this.alumnos.map((alumno) => alumno.id)
-              );
-              result.id = maxId + 1;
-              this.alumnos = [...this.alumnos, result];
-            }
-          }
+    ngOnInit(): void {
+      this.userData = this.authService.getUserData().subscribe((userData) => {
+        if (userData.rol === 'ADMIN') {
+          this.isAdmin = true;
+        }
+      });
+  
+      this.getUsuarios();
+    }
+  
+    
+    getUsuarios(): void {
+      this.alumnosService.getAlumnos().subscribe({
+        next: (data) => {
+          this.alumnos = data;
         },
       });
+    }
+  
+    openDialog(editingUser?: IAlumno): void {
+      this.matDialog
+        .open(AbmAlumnosComponent, {
+          data: editingUser,
+        })
+        .afterClosed()
+        .subscribe({
+          next: (result) => {
+            if (result) {
+              if (editingUser) {
+                this.alumnosService.updateAlumno(editingUser.id, result).subscribe({
+                  next: (data) => {
+                    this.alumnos = data;
+                  },
+                  complete() {},
+                });
+              } else {
+                this.alumnosService.createAlumno(result).subscribe({
+                  next: (data) => {
+                    this.alumnos = data;
+                  },
+                  complete() {},
+                });
+              }
+            }
+          }
+        })
+    };    
+  
+    onDeleteAlumno(id: number): void {
+      Swal.fire({
+        title: '¿Está seguro de eliminar el alumno?',
+        icon: 'warning',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.alumnosService.deleteAlumno(id).subscribe((data) => {
+            Swal.fire({
+              title: 'Alumno eliminado',
+              icon: 'success',
+            });
+            this.alumnos = data;
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire({
+            title: 'Petición Cancelada',
+            icon: 'error',
+          });
+        }
+      });
+    }
+  
+    
+  
+    ngOnDestroy(): void {
+      this.userData.unsubscribe();
+    }
   }
-
-  onDeleteAlumno(id: number): void {
-    Swal.fire({
-      title: "Esta seguro de eliminar el alumno?",
-      icon: "warning",
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.alumnos = this.alumnos.filter((u) => u.id != id);
-        Swal.fire({
-          title: "Alumno eliminado",
-          icon: "success"
-        });
-      } else if (
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        Swal.fire({
-          title: "Petición Cancelada",
-          icon: "error"
-        });
-      }
-    });
-  }
-}
-

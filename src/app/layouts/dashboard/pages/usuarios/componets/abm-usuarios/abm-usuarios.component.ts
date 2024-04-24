@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IUsuario } from '../../models';
 
@@ -30,7 +30,8 @@ export class AbmUsuariosComponent {
         '',
         [
           Validators.required, 
-          Validators.pattern('^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$'),
+          this.validatePassword,
+          //Validators.pattern('^(?=.*\d)(?=.*[a-záéíóúüñ]).*[A-ZÁÉÍÓÚÜÑ]'),
           //Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$'),
           Validators.minLength(8),
           Validators.maxLength(15),
@@ -70,5 +71,19 @@ export class AbmUsuariosComponent {
       // SI EL FORM SI ES VALIDO...
       this.matDialogRef.close(this.usuarioForm.value);
     }
+  }
+
+  validatePassword(control: FormControl): { [key: string]: any } | null {
+    const password: string = control.value;
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+    if (!(hasLowerCase && hasUpperCase && hasNumber && hasSpecialChar)) {
+      return { invalidPassword: true };
+    }
+
+    return null;
   }
 }

@@ -1,8 +1,10 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IClase } from '../../models';
+import { ICurso } from '../../../cursos/models';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import { CursosService } from '../../../cursos/services/cursos.service';
 
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
@@ -29,19 +31,21 @@ const MY_DATE_FORMAT = {
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT }
   ],
 })
-export class AbmClasesComponent {
+export class AbmClasesComponent implements OnInit{
   claseForm: FormGroup;
-  
+  cursos: ICurso[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private matDialogRef: MatDialogRef<AbmClasesComponent>,
+    private cursosService: CursosService,
     @Inject(MAT_DIALOG_DATA) private editingUser?: IClase
   ) {
     
       this.claseForm = this.formBuilder.group({
       nombre: [
         '',
-        [Validators.required, Validators.pattern('[a-zA-ZÁÉÍÓÚáéíóúñÑ ]+$'), Validators.minLength(4)],
+        [Validators.required],
       ],
       fechaInicio: [
         '',
@@ -64,6 +68,14 @@ export class AbmClasesComponent {
     if (editingUser) {
       this.claseForm.patchValue(editingUser);
     }
+  }
+
+  ngOnInit(): void {
+    this.cursosService.getCursos().subscribe({
+      next: (data) => {
+        this.cursos = data;
+      },
+    });
   }
 
   get nombreControl() {

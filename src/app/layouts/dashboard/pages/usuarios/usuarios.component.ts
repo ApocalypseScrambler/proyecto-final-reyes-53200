@@ -90,7 +90,6 @@ export class UsuariosComponent implements OnInit{
     }).then((result) => {
       if (result.isConfirmed) {
         this.usuariosService.deleteUsuario(id).subscribe((data) => {
-          //this.usuarios = this.usuarios.filter((u) => u.id !== id);
           Swal.fire({
             title: 'Usuario eliminado',
             icon: 'success',

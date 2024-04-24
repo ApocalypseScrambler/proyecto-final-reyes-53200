@@ -21,6 +21,14 @@ export class FormFieldValidationErrorsPipe implements PipeTransform {
             messages.push(
               `Debe tener al menos ${errorDetail.requiredLength} caracteres`
             );
+            if (key === 'maxlength')
+              messages.push(
+                `Debe tener menos de ${errorDetail.requiredLength} caracteres`
+              );
+            if (key === 'invalidPassword')
+              messages.push(
+                `La contraseña posee un formato no válido`
+              );
         }
       }
 
