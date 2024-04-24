@@ -27,7 +27,7 @@ export class FormFieldValidationErrorsPipe implements PipeTransform {
               );
             if (key === 'invalidPassword')
               messages.push(
-                `La contraseña posee un formato no válido`
+                `La contraseña posee un formato no válido.`
               );
         }
       }
