@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IUsuario } from './models'
+import { IUsuario } from './models';
 import { MatDialog } from '@angular/material/dialog';
 import { AbmUsuariosComponent } from './componets/abm-usuarios/abm-usuarios.component';
 import { UsuariosService } from './services/usuarios.service';
@@ -10,9 +10,9 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
-  styleUrl: './usuarios.component.scss'
+  styleUrl: './usuarios.component.scss',
 })
-export class UsuariosComponent implements OnInit{
+export class UsuariosComponent implements OnInit {
   displayedColumns: string[] = [
     'id',
     'usuario',
@@ -21,11 +21,12 @@ export class UsuariosComponent implements OnInit{
     'rol',
     'fecha_creacion',
     'fecha_modificacion',
-    'actions'
+    'actions',
   ];
 
   userData: Subscription = new Subscription();
   usuarios: IUsuario[] = [];
+  usuario: IUsuario | undefined;
   isAdmin: boolean = false;
 
   constructor(
@@ -44,7 +45,6 @@ export class UsuariosComponent implements OnInit{
     this.getUsuarios();
   }
 
-  
   getUsuarios(): void {
     this.usuariosService.getUsuarios().subscribe({
       next: (data) => {
@@ -63,12 +63,14 @@ export class UsuariosComponent implements OnInit{
         next: (result) => {
           if (result) {
             if (editingUser) {
-              this.usuariosService.updateUsuario(editingUser.id, result).subscribe({
-                next: (data) => {
-                  this.usuarios = data;
-                },
-                complete() {},
-              });
+              this.usuariosService
+                .updateUsuario(editingUser.id, result)
+                .subscribe({
+                  next: (data) => {
+                    this.usuarios = data;
+                  },
+                  complete() {},
+                });
             } else {
               this.usuariosService.createUsuario(result).subscribe({
                 next: (data) => {
@@ -78,34 +80,53 @@ export class UsuariosComponent implements OnInit{
               });
             }
           }
-        }
-      })
-  };    
+        },
+      });
+  }
 
   onDeleteUsuario(id: number): void {
-    Swal.fire({
-      title: '¿Está seguro de eliminar el usuario?',
-      icon: 'warning',
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.usuariosService.deleteUsuario(id).subscribe((data) => {
+    this.usuariosService.getUsuarioPorId(id).subscribe((data) => {
+      this.usuario = data;
+      if (this.usuario) {
+        if (this.usuario.rol === 'ADMIN') {
           Swal.fire({
-            title: 'Usuario eliminado',
-            icon: 'success',
+            title: 'Usuario administrador',
+            text: 'No se permite el borrado del usuario Administrador',
+            icon: 'error',
           });
-          this.usuarios = data;
-        });
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        } else {
+          Swal.fire({
+            title: '¿Está seguro de eliminar el usuario?',
+            icon: 'warning',
+            showCancelButton: true,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.usuariosService.deleteUsuario(id).subscribe(() => {
+                Swal.fire({
+                  title: 'Usuario eliminado',
+                  icon: 'success',
+                });
+                this.usuariosService.getUsuarios().subscribe((usuarios) => {
+                  this.usuarios = usuarios;
+                });
+              });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+              Swal.fire({
+                title: 'Petición Cancelada',
+                icon: 'error',
+              });
+            }
+          });
+        }
+      } else {
         Swal.fire({
-          title: 'Petición Cancelada',
+          title: 'Usuario no encontrado',
           icon: 'error',
         });
       }
     });
-  }
+}
 
-  
 
   ngOnDestroy(): void {
     this.userData.unsubscribe();

@@ -34,6 +34,11 @@ export class UsuariosService {
     return of(this.usuarios);
   }
 
+  getUsuarioPorId(id: number): Observable<IUsuario | undefined> {
+    const usuario = this.usuarios.find(u => u.id === id);
+    return of(usuario);
+  }
+
   createUsuario(data: IUsuario) {
     const maxId = Math.max(...this.usuarios.map((usuario) => usuario.id));
     const newUsuario: IUsuario = {

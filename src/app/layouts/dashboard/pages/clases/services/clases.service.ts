@@ -73,6 +73,11 @@ export class ClasesService {
     return of(this.clases);
   }
 
+  getClasesPorCurso(nombre: string): Observable<IClase[]> {
+    const clasesPorCurso = this.clases.filter(clase => clase.nombre === nombre);
+    return of(clasesPorCurso);
+}
+
   createClase(data: IClase) {
     const maxId = Math.max(...this.clases.map((clase) => clase.id));
     const newClase: IClase = {

@@ -90,7 +90,7 @@ export class ClasesComponent {
       if (result.isConfirmed) {
         this.clasesService.deleteClase(id).subscribe((data) => {
           Swal.fire({
-            title: 'Usuario eliminado',
+            title: 'Clase eliminada',
             icon: 'success',
           });
           this.clases = data;
