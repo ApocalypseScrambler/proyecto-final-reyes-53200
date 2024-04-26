@@ -3,6 +3,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { UsuariosService } from '../../layouts/dashboard/pages/usuarios/services/usuarios.service';
 import { IUsuario } from '../../layouts/dashboard/pages/usuarios/models';
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,6 +28,15 @@ export class AuthService {
     });
   }
 
+  verifyToken(): boolean {
+    const user = localStorage.getItem('user');
+    if (user) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   login(username: string, password: string): Observable<boolean> {
     this.obtenerUsuarios();
     const isAuthenticated = this.usuarios.some((usuario) => usuario.usuario === username && usuario.password === password);
@@ -37,14 +48,24 @@ export class AuthService {
     const userData = { usuario: username, rol: this.isAdmin ? 'ADMIN' : 'USER' };
     this.userDataSubject.next(userData);
 
+    localStorage.setItem('user', userData.usuario);
+    localStorage.setItem('rol', userData.rol);
+
     return this.isLoggedInSubject.asObservable();
   }
 
   getUserData(): Observable<any> {
+    const user = localStorage.getItem('user');
+    const rol = localStorage.getItem('rol');
+    if (user && rol) {
+      this.userDataSubject.next({ usuario: user, rol: rol });
+    }
     return this.userDataSubject.asObservable();
   }
 
   logout(): void {
+    localStorage.removeItem('user');
+    localStorage.removeItem('rol');
     this.isLoggedInSubject.next(false);
     this.router.navigate(['']);
   }

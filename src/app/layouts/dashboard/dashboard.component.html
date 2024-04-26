@@ -15,7 +15,7 @@
         <button mat-raised-button routerLink="/alumnos">Alumnos</button>
         <button mat-raised-button routerLink="/cursos">Cursos</button>
         <button mat-raised-button routerLink="/clases">Clases</button>
-        <button mat-raised-button routerLink="/usuarios">Usuarios</button>
+        <button mat-raised-button routerLink="/usuarios" *ngIf="isAdmin">Usuarios</button>
         <!-- *ngIf="userRoleSession === 'ADMIN'" -->
         <button
           *ngIf="isAuthenticated"

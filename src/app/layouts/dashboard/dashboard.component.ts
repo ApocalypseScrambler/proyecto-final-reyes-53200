@@ -21,6 +21,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isAuthenticated: boolean = false;
   authSubscription: Subscription;
   userData$?: Observable<UserData>;
+  isAdmin: boolean = false;
+  userData: Subscription = new Subscription();
 
   isMobile(): boolean {
     return window.innerWidth <= 280;
@@ -29,7 +31,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private authService: AuthService) {
     this.authSubscription = this.authService.isLoggedIn().subscribe((loggedIn: boolean) => {
       this.isAuthenticated = loggedIn;
-      if (loggedIn) {
+      if (localStorage.getItem('user')) {
+        this.isAuthenticated = true
+      }
+      if (loggedIn || this.isAuthenticated) {
         this.userData$ = this.authService.getUserData();
         this.router.navigate(['/home']);
       }
@@ -37,6 +42,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.userData = this.authService.getUserData().subscribe((userData) => {
+      if (userData.rol === 'ADMIN') {
+        this.isAdmin = true;
+      }
+    });
     // Escucha los cambios de ruta y actualiza el título
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
