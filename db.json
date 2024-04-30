@@ -1,0 +1,93 @@
+{
+  "courses": [
+    {
+      "nombre": "Desarrollo Web",
+      "jornada": "Noche",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "nombre": "JavaScript",
+      "jornada": "Tarde"
+    },
+    {
+      "id": "3",
+      "nombre": "Data Science",
+      "jornada": "Tarde"
+    },
+    {
+      "id": "4",
+      "nombre": "Machine Learning",
+      "jornada": "Mañana"
+    },
+    {
+      "id": "5",
+      "nombre": "Data Analytics",
+      "jornada": "Noche"
+    },
+    {
+      "id": "3182",
+      "nombre": "ASDASDASDAS",
+      "jornada": "Mañana"
+    }
+  ],
+  "users": [],
+  "class": [
+    {
+      "nombre": "Desarrollo Web",
+      "fechaInicio": "2024-03-05T00:00:00.000Z",
+      "fechaFin": "2024-06-22T00:00:00.000Z",
+      "horarioInicio": "22:00",
+      "horarioFin": "22:00",
+      "id": "2"
+    },
+    {
+      "id": "3",
+      "nombre": "Data Science",
+      "fechaInicio": "2024-04-20T00:00:00.000Z",
+      "fechaFin": "2024-08-15T00:00:00.000Z",
+      "horarioInicio": "19:00",
+      "horarioFin": "21:00"
+    },
+    {
+      "id": "4",
+      "nombre": "Data Analytics",
+      "fechaInicio": "2024-03-08T00:00:00.000Z",
+      "fechaFin": "2024-05-26T00:00:00.000Z",
+      "horarioInicio": "20:30",
+      "horarioFin": "22:30"
+    },
+    {
+      "id": "5",
+      "nombre": "Data Science",
+      "fechaInicio": "2024-04-12T00:00:00.000Z",
+      "fechaFin": "2024-07-05T00:00:00.000Z",
+      "horarioInicio": "20:30",
+      "horarioFin": "22:30"
+    },
+    {
+      "id": "6",
+      "nombre": "JavaScript",
+      "fechaInicio": "2024-05-20T00:00:00.000Z",
+      "fechaFin": "2024-08-14T00:00:00.000Z",
+      "horarioInicio": "08:00",
+      "horarioFin": "10:00"
+    },
+    {
+      "id": "7",
+      "nombre": "Machine Learning",
+      "fechaInicio": "2024-04-01T00:00:00.000Z",
+      "fechaFin": "2024-06-30T00:00:00.000Z",
+      "horarioInicio": "15:00",
+      "horarioFin": "17:00"
+    },
+    {
+      "id": "6595",
+      "nombre": "Data Analytics",
+      "fechaInicio": "2024-04-14T03:00:00.000Z",
+      "fechaFin": "2024-04-20T03:00:00.000Z",
+      "horarioInicio": "11:00",
+      "horarioFin": "22:00"
+    }
+  ]
+}

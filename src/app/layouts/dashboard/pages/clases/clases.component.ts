@@ -64,16 +64,15 @@ export class ClasesComponent {
             if (editingUser) {
               this.clasesService.updateClase(editingUser.id, result).subscribe({
                 next: (data) => {
-                  this.clases = data;
+                  this.clases = this.clases.map(clase => clase.id === editingUser.id ? data : clase);
                 },
-                complete() {},
               });
             } else {
               this.clasesService.createClase(result).subscribe({
                 next: (data) => {
-                  this.clases = data;
+                  this.clases.push(data);
+                  this.getClases();
                 },
-                complete() {},
               });
             }
           }
@@ -81,7 +80,7 @@ export class ClasesComponent {
       })
   };    
 
-  onDeleteClase(id: number): void {
+  onDeleteClase(id: string): void {
     Swal.fire({
       title: '¿Está seguro de eliminar la clase?',
       icon: 'warning',
@@ -93,7 +92,7 @@ export class ClasesComponent {
             title: 'Clase eliminada',
             icon: 'success',
           });
-          this.clases = data;
+          this.clases = this.clases.filter(clase => clase.id !== id);
         });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire({

@@ -64,16 +64,16 @@ export class CursosComponent implements OnInit{
             if (editingUser) {
               this.cursosService.updateCurso(editingUser.id, result).subscribe({
                 next: (data) => {
-                  this.cursos = data;
+                  this.cursos = this.cursos.map(curso => curso.id === editingUser.id ? data : curso);
                 },
-                complete() {},
               });
             } else {
-              this.cursosService.createUsuario(result).subscribe({
+              this.cursosService.createCurso(result).subscribe({
                 next: (data) => {
-                  this.cursos = data;
+                  this.cursos.push(data);
+                  this.getCursos();
                 },
-                complete() {},
+                
               });
             }
           }
@@ -81,7 +81,7 @@ export class CursosComponent implements OnInit{
       })
   };    
 
-  onDeleteCurso(id: number, nombre: string): void {
+  onDeleteCurso(id: string, nombre: string): void {
     this.clasesService.getClasesPorCurso(nombre).subscribe((clases) => {
       if (clases.length > 0) {
         Swal.fire({
@@ -101,7 +101,7 @@ export class CursosComponent implements OnInit{
                 title: 'Curso eliminado',
                 icon: 'success',
               });
-              this.cursos = data;
+              this.cursos = this.cursos.filter(curso => curso.id !== id);
             });
           } else if (result.dismiss === Swal.DismissReason.cancel) {
             Swal.fire({

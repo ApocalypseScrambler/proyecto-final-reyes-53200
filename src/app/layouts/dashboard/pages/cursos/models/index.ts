@@ -1,5 +1,10 @@
 export interface ICurso {
-    id: number;
+    id: string;
     nombre: string;
     jornada: string;
+  }
+
+  export interface ICreateCursoPayload {
+    nombre: string | null;
+    jornada: string | null;
   }
