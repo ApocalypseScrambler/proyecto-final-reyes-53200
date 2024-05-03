@@ -26,7 +26,92 @@
         "jornada": "Noche"
       }
     ],
-    "users": [],
+    "users": [
+      {
+        "id": "1",
+        "nombre": "Admin",
+        "apellido": "Admin",
+        "edad": 99,
+        "usuario": "admin",
+        "password": "pass",
+        "email": "correo1@mail.com",
+        "rol": "ADMIN",
+        "fecha_creacion": "2024-01-01T00:00:00.000Z",
+        "fecha_modificacion": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "nombre": "Carlos",
+        "apellido": "Sanchez",
+        "edad": 43,
+        "usuario": "user",
+        "password": "pass",
+        "email": "correo2@mail.com",
+        "rol": "TEACHER",
+        "fecha_creacion": "2024-01-01T00:00:00.000Z",
+        "fecha_modificacion": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "edad": 28,
+        "usuario": "jperez",
+        "password": "pass",
+        "email": "juanperez@example.com",
+        "rol": "STUDENT",
+        "fecha_creacion": "2024-01-01T00:00:00.000Z",
+        "fecha_modificacion": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "nombre": "María",
+        "apellido": "Gómez",
+        "edad": 25,
+        "usuario": "mgomez",
+        "password": "pass",
+        "email": "mariagomez@example.com",
+        "rol": "STUDENT",
+        "fecha_creacion": "2024-01-01T00:00:00.000Z",
+        "fecha_modificacion": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "nombre": "Carlos",
+        "apellido": "Gutierrez",
+        "edad": 30,
+        "usuario": "cgutierrez",
+        "password": "pass",
+        "email": "carlosgutierrez@example.com",
+        "rol": "STUDENT",
+        "fecha_creacion": "2024-01-01T00:00:00.000Z",
+        "fecha_modificacion": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "6",
+        "nombre": "Laura",
+        "apellido": "Rodríguez",
+        "edad": 24,
+        "usuario": "lrodriguez",
+        "password": "pass",
+        "email": "laurarodriguez@example.com",
+        "rol": "STUDENT",
+        "fecha_creacion": "2024-01-01T00:00:00.000Z",
+        "fecha_modificacion": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "7",
+        "nombre": "Pedro",
+        "apellido": "Martínez",
+        "edad": 24,
+        "usuario": "pmartinez",
+        "password": "pass",
+        "email": "pedromartinez@example.com",
+        "rol": "STUDENT",
+        "fecha_creacion": "2024-01-01T00:00:00.000Z",
+        "fecha_modificacion": "2024-01-01T00:00:00.000Z"        
+      }
+    ],
     "class": [
         {
             "id": "1",
