@@ -20,6 +20,8 @@ export class UsuariosService {
   }
 
   createUsuario(payload: ICreateUsuarioPayload) {
+    payload.fecha_creacion = new Date();
+    payload.fecha_modificacion = new Date();
     return this.httpClient.post<IUsuario>(environment.baseAPIURL + '/users', payload);
   }
 
