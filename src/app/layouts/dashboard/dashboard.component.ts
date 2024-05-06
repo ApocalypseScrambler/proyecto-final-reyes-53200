@@ -43,10 +43,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userData = this.authService.getUserData().subscribe((userData) => {
-      if (userData.rol === 'ADMIN') {
-        this.isAdmin = true;
-      } else {
-        this.isAdmin = false;
+      if (userData && userData.rol) {
+        if (userData.rol === 'ADMIN') {
+          this.isAdmin = true;
+        } else {
+          this.isAdmin = false;
+        }
       }
     });
     
