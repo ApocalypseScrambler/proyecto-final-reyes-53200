@@ -63,20 +63,18 @@ export class UsuariosComponent implements OnInit {
         next: (result) => {
           if (result) {
             if (editingUser) {
-              this.usuariosService
-                .updateUsuario(editingUser.id, result)
-                .subscribe({
-                  next: (data) => {
-                    this.usuarios = data;
-                  },
-                  complete() {},
-                });
+              this.usuariosService.updateUsuario(editingUser.id, result).subscribe({
+                next: (data) => {
+                  this.usuarios = this.usuarios.map(usuario => usuario.id === editingUser.id ? data : usuario);
+                },
+              });
             } else {
               this.usuariosService.createUsuario(result).subscribe({
                 next: (data) => {
-                  this.usuarios = data;
+                  this.usuarios.push(data);
+                  this.getUsuarios();
                 },
-                complete() {},
+                
               });
             }
           }
@@ -84,7 +82,7 @@ export class UsuariosComponent implements OnInit {
       });
   }
 
-  onDeleteUsuario(id: number): void {
+  onDeleteUsuario(id: string): void {
     this.usuariosService.getUsuarioPorId(id).subscribe((data) => {
       this.usuario = data;
       if (this.usuario) {

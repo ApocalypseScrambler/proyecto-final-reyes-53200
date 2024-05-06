@@ -39,11 +39,11 @@ export class AlumnosComponent {
         }
       });
   
-      this.getUsuarios();
+      this.getAlumnos();
     }
   
     
-    getUsuarios(): void {
+    getAlumnos(): void {
       this.alumnosService.getAlumnos().subscribe({
         next: (data) => {
           this.alumnos = data;
@@ -63,16 +63,16 @@ export class AlumnosComponent {
               if (editingUser) {
                 this.alumnosService.updateAlumno(editingUser.id, result).subscribe({
                   next: (data) => {
-                    this.alumnos = data;
+                    this.alumnos = this.alumnos.map(alumno => alumno.id === editingUser.id ? data : alumno);
                   },
-                  complete() {},
                 });
               } else {
                 this.alumnosService.createAlumno(result).subscribe({
                   next: (data) => {
-                    this.alumnos = data;
+                    this.alumnos.push(data);
+                    this.getAlumnos();
                   },
-                  complete() {},
+                  
                 });
               }
             }
@@ -80,7 +80,7 @@ export class AlumnosComponent {
         })
     };    
   
-    onDeleteAlumno(id: number): void {
+    onDeleteAlumno(id: string): void {
       Swal.fire({
         title: '¿Está seguro de eliminar el alumno?',
         icon: 'warning',
@@ -92,7 +92,7 @@ export class AlumnosComponent {
               title: 'Alumno eliminado',
               icon: 'success',
             });
-            this.alumnos = data;
+            this.getAlumnos();
           });
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           Swal.fire({

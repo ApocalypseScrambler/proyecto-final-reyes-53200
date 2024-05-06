@@ -1,43 +1,29 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { IAlumno } from '../models';
-
+import { IAlumno, ICreateAlumnoPayload } from '../models';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AlumnosService {
-    private alumnos: IAlumno[] = [
-        
-      ];
-    
   
-  constructor() {}
+  constructor(private httpClient: HttpClient) {}
 
   getAlumnos(): Observable<IAlumno[]> {
-    return of(this.alumnos);
+    return this.httpClient.get<IAlumno[]>(environment.baseAPIURL + '/students');
   }
 
-  createAlumno(data: IAlumno) {
-    const maxId = Math.max(...this.alumnos.map((alumno) => alumno.id));
-    const newAlumno: IAlumno = {
-        id: maxId + 1,
-        nombre: data.nombre,
-        apellido: data.apellido,
-        edad: data.edad,
-        correo: data.correo,
-    };
-    this.alumnos = [...this.alumnos, newAlumno];
-    return of(this.alumnos);
+  createAlumno(payload: ICreateAlumnoPayload) {
+    return this.httpClient.post<IAlumno>(environment.baseAPIURL + '/students', payload);
   }
 
-  deleteAlumno(id: number) {
-    this.alumnos = this.alumnos.filter((alumno) => alumno.id != id);
-    return of(this.alumnos);
+  deleteAlumno(id: string) {
+    return this.httpClient.delete<IAlumno>(environment.baseAPIURL + '/students/' + id);
   }
 
-  updateAlumno(id: number, data: IAlumno) {
-    this.alumnos = this.alumnos.map((alumno) => alumno.id === id ? { ...alumno, ...data } : alumno);
-    return of(this.alumnos);
+  updateAlumno(id: string, payload: ICreateAlumnoPayload) {
+    return this.httpClient.put<IAlumno>(environment.baseAPIURL + '/students/' + id, payload);
   }
 }

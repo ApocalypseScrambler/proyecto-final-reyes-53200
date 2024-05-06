@@ -1,29 +1,31 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { UsuariosService } from '../../layouts/dashboard/pages/usuarios/services/usuarios.service';
 import { IUsuario } from '../../layouts/dashboard/pages/usuarios/models';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private isAdmin: boolean = false;
-  private isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private userDataSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private isLoggedInSubject: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
+  private userDataSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
   private usuarios: IUsuario[] = [];
 
   constructor(
     private router: Router,
     private usuariosService: UsuariosService
-  ) { }
-  
+  ) {}
+
   obtenerUsuarios(): void {
     this.usuariosService.getUsuarios().subscribe({
       next: (data) => {
         this.usuarios = data;
+        debugger;
       },
     });
   }
@@ -38,20 +40,32 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<boolean> {
-    this.obtenerUsuarios();
-    const isAuthenticated = this.usuarios.some((usuario) => usuario.usuario === username && usuario.password === password);
+    return this.usuariosService.getUsuarios().pipe(
+      switchMap((usuarios) => {
+        const isAuthenticated = usuarios.some(
+          (usuario) => usuario.usuario === username && usuario.password === password
+        );
+        
+        if (isAuthenticated) {
+          const adminUser = usuarios.find(
+            (usuario) => usuario.usuario === username && usuario.rol === 'ADMIN'
+          );
+          this.isAdmin = adminUser !== undefined;
     
-    const adminUser = this.usuarios.find((usuario) => usuario.usuario === username && usuario.rol === 'ADMIN');
-    this.isAdmin = adminUser !== undefined;
-
-    this.isLoggedInSubject.next(isAuthenticated);
-    const userData = { usuario: username, rol: this.isAdmin ? 'ADMIN' : 'USER' };
-    this.userDataSubject.next(userData);
-
-    localStorage.setItem('user', userData.usuario);
-    localStorage.setItem('rol', userData.rol);
-
-    return this.isLoggedInSubject.asObservable();
+          const userData = {
+            usuario: username,
+            rol: this.isAdmin ? 'ADMIN' : 'USER',
+          };
+          this.userDataSubject.next(userData);
+    
+          localStorage.setItem('user', userData.usuario);
+          localStorage.setItem('rol', userData.rol);
+        }
+        
+        this.isLoggedInSubject.next(isAuthenticated);
+        return this.isLoggedInSubject.asObservable();
+      })
+    );
   }
 
   getUserData(): Observable<any> {

@@ -45,9 +45,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.userData = this.authService.getUserData().subscribe((userData) => {
       if (userData.rol === 'ADMIN') {
         this.isAdmin = true;
+      } else {
+        this.isAdmin = false;
       }
     });
-    // Escucha los cambios de ruta y actualiza el título
+    
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(() => this.activatedRoute),

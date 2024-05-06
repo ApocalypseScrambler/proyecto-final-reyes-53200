@@ -1,50 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { IUsuario } from '../models';
-
+import { IUsuario, ICreateUsuarioPayload } from '../models';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsuariosService {
-  private usuarios: IUsuario[] = [
-    
-  ];
-  
-  constructor() {}
+   
+  constructor(private httpClient: HttpClient) {}
 
   getUsuarios(): Observable<IUsuario[]> {
-    return of(this.usuarios);
+    return this.httpClient.get<IUsuario[]>(environment.baseAPIURL + '/users');
   }
 
-  getUsuarioPorId(id: number): Observable<IUsuario | undefined> {
-    const usuario = this.usuarios.find(u => u.id === id);
-    return of(usuario);
+  getUsuarioPorId(id: string): Observable<IUsuario | undefined> {
+    return this.httpClient.get<IUsuario>(environment.baseAPIURL + '/users/' + id);
   }
 
-  createUsuario(data: IUsuario) {
-    const maxId = Math.max(...this.usuarios.map((usuario) => usuario.id));
-    const newUsuario: IUsuario = {
-      id: maxId + 1,
-      usuario: data.usuario,
-      password: data.password,
-      email: data.email,
-      rol: data.rol,
-      fecha_creacion: new Date(),
-      fecha_modificacion: new Date(),
-    };
-    this.usuarios = [...this.usuarios, newUsuario];
-    return of(this.usuarios);
+  createUsuario(payload: ICreateUsuarioPayload) {
+    return this.httpClient.post<IUsuario>(environment.baseAPIURL + '/users', payload);
   }
 
-  deleteUsuario(id: number) {
-    this.usuarios = this.usuarios.filter((usuario) => usuario.id != id);
-    return of(this.usuarios);
+  deleteUsuario(id: string) {
+    return this.httpClient.delete<IUsuario>(environment.baseAPIURL + '/users/' + id);
   }
 
-  updateUsuario(id: number, data: IUsuario) {
-    data.fecha_modificacion = new Date();
-    this.usuarios = this.usuarios.map((usuario) => usuario.id === id ? { ...usuario, ...data } : usuario);
-    return of(this.usuarios);
+  updateUsuario(id: string, payload: ICreateUsuarioPayload) {
+    payload.fecha_modificacion = new Date();
+    return this.httpClient.put<IUsuario>(environment.baseAPIURL + '/users/' + id, payload);
   }
 }
