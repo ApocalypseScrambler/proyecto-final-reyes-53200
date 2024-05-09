@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientModule } from '@angular/common/http'; 
+import { SharedModule } from '../../../../shared/shared.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CursosComponent } from './cursos.component';
 
 describe('CursosComponent', () => {
@@ -8,7 +10,8 @@ describe('CursosComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CursosComponent]
+      declarations: [CursosComponent],
+      imports: [HttpClientModule, SharedModule, BrowserAnimationsModule] 
     })
     .compileComponents();
     

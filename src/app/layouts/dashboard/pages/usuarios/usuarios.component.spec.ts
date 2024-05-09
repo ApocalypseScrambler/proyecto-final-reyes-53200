@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientModule } from '@angular/common/http'; 
+import { SharedModule } from '../../../../shared/shared.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UsuariosComponent } from './usuarios.component';
 
 describe('UsuariosComponent', () => {
@@ -8,7 +10,8 @@ describe('UsuariosComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UsuariosComponent]
+      declarations: [UsuariosComponent],
+      imports: [HttpClientModule, SharedModule, BrowserAnimationsModule] 
     })
     .compileComponents();
     
