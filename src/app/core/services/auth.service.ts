@@ -25,7 +25,6 @@ export class AuthService {
     this.usuariosService.getUsuarios().subscribe({
       next: (data) => {
         this.usuarios = data;
-        debugger;
       },
     });
   }
