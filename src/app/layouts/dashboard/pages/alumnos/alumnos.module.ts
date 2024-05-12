@@ -6,11 +6,13 @@ import { AlumnosComponent } from './alumnos.component';
 
 import { AbmAlumnosComponent } from './components/abm-alumnos/abm-alumnos.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { AbmAlumnoClasesComponent } from './components/abm-alumno-clases/abm-alumno-clases.component';
 
 @NgModule({
   declarations: [
     AlumnosComponent,
-    AbmAlumnosComponent
+    AbmAlumnosComponent,
+    AbmAlumnoClasesComponent
   ],
   imports: [
     CommonModule,

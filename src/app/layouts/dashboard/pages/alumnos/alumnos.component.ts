@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IAlumno } from './models';
 import { MatDialog } from '@angular/material/dialog';
 import { AbmAlumnosComponent } from './components/abm-alumnos/abm-alumnos.component';
+import { AbmAlumnoClasesComponent } from './components/abm-alumno-clases/abm-alumno-clases.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { AlumnosService } from './services/alumnos.service';
@@ -69,6 +70,7 @@ export class AlumnosComponent {
               } else {
                 this.alumnosService.createAlumno(result).subscribe({
                   next: (data) => {
+                    data.clases = []
                     this.alumnos.push(data);
                     this.getAlumnos();
                   },
@@ -78,8 +80,14 @@ export class AlumnosComponent {
             }
           }
         })
-    };    
-  
+    };   
+    
+    openDetail(alumno: IAlumno): void {
+      this.matDialog.open(AbmAlumnoClasesComponent, {
+        data: alumno
+      });
+    }
+
     onDeleteAlumno(id: string): void {
       Swal.fire({
         title: '¿Está seguro de eliminar el alumno?',

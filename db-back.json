@@ -52,35 +52,40 @@
       "nombre": "Juan",
       "apellido": "Pérez",
       "edad": 28,
-      "correo": "juanperez@example.com"
+      "correo": "juanperez@example.com",
+      "clases": ["1","4"]
     },
     {
       "id": "2",
       "nombre": "María",
       "apellido": "Gómez",
       "edad": 25,
-      "correo": "mariagomez@example.com"
+      "correo": "mariagomez@example.com",
+      "clases": []
     },
     {
       "id": "3",
       "nombre": "Carlos",
       "apellido": "Gutierrez",
       "edad": 30,
-      "correo": "carlosgutierrez@example.com"
+      "correo": "carlosgutierrez@example.com",
+      "clases": ["6","7"]
     },
     {
       "id": "4",
       "nombre": "Laura",
       "apellido": "Rodríguez",
       "edad": 24,
-      "correo": "laurarodriguez@example.com"
+      "correo": "laurarodriguez@example.com",
+      "clases": ["1","6"]
     },
     {
       "id": "5",
       "nombre": "Pedro",
       "apellido": "Martínez",
       "edad": 24,
-      "correo": "pedromartinez@example.com"
+      "correo": "pedromartinez@example.com",
+      "clases": ["1","6","4"]
     }
   ],
   "class": [

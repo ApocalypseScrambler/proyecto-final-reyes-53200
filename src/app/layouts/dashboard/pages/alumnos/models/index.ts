@@ -4,6 +4,7 @@ export interface IAlumno {
     apellido: string;
     edad: number;
     correo: string;
+    clases: string[];
   }
 
   export interface ICreateAlumnoPayload {
@@ -11,4 +12,5 @@ export interface IAlumno {
     apellido: string | null;
     edad: number | null;
     correo: string | null;
+    clases: string[] | null;
   }
