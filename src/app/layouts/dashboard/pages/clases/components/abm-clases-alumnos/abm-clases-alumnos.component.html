@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>Detalles de la Clase</h2>
+<div mat-dialog-content>
+  <form [formGroup]="claseAlumnosForm">
+    <div class="row">
+      <div>
+      <p><strong>Id:</strong>{{ clase.id }}</p>
+      <p>
+        <strong>Nombre:</strong>
+        {{ clase.nombre }}
+      </p>
+      <p><strong>Fecha Inicio:</strong> {{ clase.fechaInicio | date: 'dd/MM/yyyy' }}</p>
+      <p><strong>Fecha Fin:</strong> {{ clase.fechaFin | date: 'dd/MM/yyyy' }}</p>
+      <p><strong>Horario Inicio:</strong> {{ clase.horarioInicio }}</p>
+      <p><strong>Horario Fin:</strong> {{ clase.horarioFin }}</p>
+      </div>
+      
+      <div class="d-flex">
+        <div class="col-10">
+          <mat-form-field class="selectAlumnos">
+            <mat-label>Alumnos</mat-label>
+            <mat-select formControlName="nombre">
+              <mat-option *ngFor="let alumno of alumnos" [value]="alumno.id">
+                {{ alumno.nombre | nombreCompleto : alumno.apellido }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-2">
+          <button
+            (click)="onAgregarAlumno()"
+            mat-raised-button
+            color="primary"
+            [disabled]="!isAdmin"
+          >
+            Agregar Alumno
+          </button>
+        </div>
+      </div>
+      <p>
+        <strong>Nombre:</strong>
+        {{ clase.nombre }}
+      </p>
+      <p><strong>Alumnos Inscriptos: ({{ alumnosInscritos.length }})</strong></p>
+    <ul *ngIf="alumnosInscritos && alumnosInscritos.length > 0">
+        <li *ngFor="let alumno of alumnosInscritos; let i = index">
+            {{ alumno.nombre | nombreCompleto:alumno.apellido }}
+          
+            <button
+            (click)="onDeleteAlumno(alumno)"
+            mat-icon-button
+            color="warn"
+            [disabled]="!isAdmin"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+      </ul>
+      <p *ngIf="!alumnosInscritos || alumnosInscritos.length === 0">Sin Alumnos Inscriptos</p>
+    </div>
+  </form>
+</div>

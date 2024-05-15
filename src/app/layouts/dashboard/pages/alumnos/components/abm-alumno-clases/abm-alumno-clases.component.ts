@@ -26,10 +26,10 @@ export class AbmAlumnoClasesComponent implements OnInit {
     public clasesService: ClasesService,
     private authService: AuthService,
     private alumnosService: AlumnosService,
-    private formBuilder: FormBuilder,
+    private formBuilder: FormBuilder
   ) {
     this.alumnoClasesForm = this.formBuilder.group({
-      nombre: ['']
+      nombre: [''],
     });
   }
 
@@ -39,7 +39,7 @@ export class AbmAlumnoClasesComponent implements OnInit {
         this.isAdmin = true;
       }
     });
-    
+
     this.cargarClases();
     this.cargarClasesFormatted();
   }
@@ -73,23 +73,27 @@ export class AbmAlumnoClasesComponent implements OnInit {
 
   onAgregarClase(): void {
     const claseIdSeleccionada = this.alumnoClasesForm.value.nombre;
-    
+
     if (!this.alumno.clases.includes(claseIdSeleccionada)) {
-      const claseSeleccionada = this.clases.find(clase => clase.id === claseIdSeleccionada);
+      const claseSeleccionada = this.clases.find(
+        (clase) => clase.id === claseIdSeleccionada
+      );
       if (claseSeleccionada) {
         this.alumno.clases.push(claseIdSeleccionada);
-      this.alumnosService.updateAlumno(this.alumno.id, this.alumno).subscribe({
-          next: (data) => {
-            this.alumno = data;
-            this.cargarClasesFormatted();
-          },
-          error: (error) => {
-            Swal.fire({
-              title: 'Error al agregar la clase al alumno: ' + error,
-              icon: 'error',
-            });
-          }
-        });
+        this.alumnosService
+          .updateAlumno(this.alumno.id, this.alumno)
+          .subscribe({
+            next: (data) => {
+              this.alumno = data;
+              this.cargarClasesFormatted();
+            },
+            error: (error) => {
+              Swal.fire({
+                title: 'Error al agregar la clase al alumno: ' + error,
+                icon: 'error',
+              });
+            },
+          });
       }
     } else {
       Swal.fire({

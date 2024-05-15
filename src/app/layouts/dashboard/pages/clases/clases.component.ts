@@ -6,7 +6,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ClasesService } from './services/clases.service';
-
+import { AbmClasesAlumnosComponent } from './components/abm-clases-alumnos/abm-clases-alumnos.component';
 @Component({
   selector: 'app-clases',
   templateUrl: './clases.component.html',
@@ -79,6 +79,12 @@ export class ClasesComponent {
         }
       })
   };    
+
+  openDetail(clase: IClase): void {
+    this.matDialog.open(AbmClasesAlumnosComponent, {
+      data: clase
+    });
+  }
 
   onDeleteClase(id: string): void {
     Swal.fire({
