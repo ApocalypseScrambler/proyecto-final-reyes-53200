@@ -1,57 +1,43 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { Subscription, Observable } from 'rxjs';
-import { UsuarioRol } from './pages/usuarios/models';
-
-interface UserData {
-  usuario: string;
-  rol: UsuarioRol;
-}
+import { Store } from '@ngrx/store';
+import { authIsLogin, authUserLogin, authRolLogin } from '../../store/auth/auth.selectors'; 
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
   showFiller = false;
   titulo: string = '';
-  isAuthenticated: boolean = false;
-  authSubscription: Subscription;
-  userData$?: Observable<UserData>;
   isAdmin: boolean = false;
   userData: Subscription = new Subscription();
-
+  loadComplete: boolean = false; 
+  isLogin$: Observable<boolean>;
+  userLogin$: Observable<string | null>;
+  rolLogin$: Observable<string | null>;
+  
   isMobile(): boolean {
     return window.innerWidth <= 280;
   }
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private authService: AuthService) {
-    this.authSubscription = this.authService.isLoggedIn().subscribe((loggedIn: boolean) => {
-      this.isAuthenticated = loggedIn;
-      if (localStorage.getItem('user')) {
-        this.isAuthenticated = true
-      }
-      if (loggedIn || this.isAuthenticated) {
-        this.userData$ = this.authService.getUserData();
-        this.router.navigate(['/home']);
-      }
-    });
-  }
-
+  constructor(
+    private router: Router, 
+    private activatedRoute: ActivatedRoute, 
+    private authService: AuthService,
+    private store: Store,
+  ) {
+    this.isLogin$ = this.store.select(authIsLogin);
+    this.userLogin$ = this.store.select(authUserLogin);
+    this.rolLogin$ = this.store.select(authRolLogin);
+    };
+  
   ngOnInit(): void {
-    this.userData = this.authService.getUserData().subscribe((userData) => {
-      if (userData && userData.rol) {
-        if (userData.rol === 'ADMIN') {
-          this.isAdmin = true;
-        } else {
-          this.isAdmin = false;
-        }
-      }
-    });
-    
+    this.isLoad();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(() => this.activatedRoute),
@@ -66,11 +52,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  isLoad(): void {
+    const user = localStorage.getItem('user');
+    const rol = localStorage.getItem('rol');
+    if (user && rol) {
+      this.loadComplete = true
+    } else {
+      this.loadComplete = false
+    }
+    
+  }
+
   logout(): void {
+    this.loadComplete = false
     this.authService.logout();
   }
   
-  ngOnDestroy(): void {
-    this.authSubscription.unsubscribe();
-  }
 }

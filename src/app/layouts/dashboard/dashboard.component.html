@@ -1,4 +1,5 @@
-<div *ngIf="isAuthenticated">
+
+<div *ngIf="(isLogin$ | async)">
   <mat-drawer-container class="example-container" autosize>
     <!-- SIDEBAR -->
     <mat-drawer
@@ -15,10 +16,10 @@
         <button mat-raised-button routerLink="/alumnos">Alumnos</button>
         <button mat-raised-button routerLink="/cursos">Cursos</button>
         <button mat-raised-button routerLink="/clases">Clases</button>
-        <button mat-raised-button routerLink="/usuarios" *ngIf="isAdmin">Usuarios</button>
+        <button mat-raised-button routerLink="/usuarios" *ngIf="(rolLogin$ | async) === 'ADMIN'">Usuarios</button>
         <!-- *ngIf="userRoleSession === 'ADMIN'" -->
         <button
-          *ngIf="isAuthenticated"
+          *ngIf="(isLogin$ | async)"
           mat-raised-button
           color="warn"
           (click)="logout()"
@@ -55,8 +56,8 @@
             alt="Login toolbar"
             class="login"
           />
-          <div *ngIf="userData$ | async as userData">
-            <p class="usuario">{{ userData.usuario }} ({{ userData.rol }})</p>
+          <div *ngIf="(isLogin$ | async)">
+            <p class="usuario">{{ this.userLogin$ | async}} ({{ this.rolLogin$ | async}})</p>
           </div>
         </div>
       </mat-toolbar>
@@ -70,6 +71,8 @@
     <!-- CONTENIDO A LA DERECHA DEL SIDEBAR -->
   </mat-drawer-container>
 </div>
-<div *ngIf="!isAuthenticated">
+<div *ngIf="!loadComplete">
+<div *ngIf="!(isLogin$ | async)">
   <app-login></app-login>
+</div>
 </div>
