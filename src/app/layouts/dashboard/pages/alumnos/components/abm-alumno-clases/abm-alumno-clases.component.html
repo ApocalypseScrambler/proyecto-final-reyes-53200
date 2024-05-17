@@ -31,7 +31,7 @@
             (click)="onAgregarClase()"
             mat-raised-button
             color="primary"
-            [disabled]="!isAdmin"
+            [disabled]="(rolLogin$ | async) !== 'ADMIN'"
           >
             Agregar Clase
           </button>
@@ -44,7 +44,7 @@
             (click)="onDeleteClase(alumno.clases[i])"
             mat-icon-button
             color="warn"
-            [disabled]="!isAdmin"
+            [disabled]="(rolLogin$ | async) !== 'ADMIN'"
           >
             <mat-icon>delete</mat-icon>
           </button>

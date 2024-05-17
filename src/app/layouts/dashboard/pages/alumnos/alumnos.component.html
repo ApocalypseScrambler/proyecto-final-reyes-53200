@@ -4,7 +4,7 @@
     </button>
   </div>
   
-  <table mat-table [dataSource]="alumnos" class="mat-elevation-z8">
+  <table mat-table [dataSource]="(alumnos$ | async) || []" class="mat-elevation-z8">
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
   
@@ -40,11 +40,11 @@
           <mat-icon>visibility</mat-icon>
         </button>
 
-        <button (click)="openDialog(element)" mat-icon-button color="primary" [disabled]="!isAdmin">
+        <button (click)="openDialog(element)" mat-icon-button color="primary" [disabled]="(rolLogin$ | async) !== 'ADMIN'">
           <mat-icon>edit</mat-icon>
         </button>
   
-        <button (click)="onDeleteAlumno(element.id)" mat-icon-button color="warn" [disabled]="!isAdmin">
+        <button (click)="onDeleteAlumno(element.id)" mat-icon-button color="warn" [disabled]="(rolLogin$ | async) !== 'ADMIN'">
           <mat-icon>delete</mat-icon>
         </button>
       </td>

@@ -7,6 +7,10 @@ import { AlumnosComponent } from './alumnos.component';
 import { AbmAlumnosComponent } from './components/abm-alumnos/abm-alumnos.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { AbmAlumnoClasesComponent } from './components/abm-alumno-clases/abm-alumno-clases.component';
+import { EffectsModule } from '@ngrx/effects';
+import { AlumnoEffects } from './store/alumno.effects';
+import { StoreModule } from '@ngrx/store';
+import { alumnoFeature } from './store/alumno.reducer';
 
 @NgModule({
   declarations: [
@@ -17,7 +21,9 @@ import { AbmAlumnoClasesComponent } from './components/abm-alumno-clases/abm-alu
   imports: [
     CommonModule,
     AlumnosRoutingModule,
-    SharedModule
+    SharedModule,
+    StoreModule.forFeature(alumnoFeature),
+    EffectsModule.forFeature([AlumnoEffects])
   ],
   exports: [AlumnosComponent]
 })

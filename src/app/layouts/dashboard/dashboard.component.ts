@@ -14,7 +14,6 @@ import { authIsLogin, authUserLogin, authRolLogin } from '../../store/auth/auth.
 export class DashboardComponent implements OnInit {
   showFiller = false;
   titulo: string = '';
-  isAdmin: boolean = false;
   userData: Subscription = new Subscription();
   loadComplete: boolean = false; 
   isLogin$: Observable<boolean>;

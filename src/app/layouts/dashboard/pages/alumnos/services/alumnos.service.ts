@@ -8,7 +8,6 @@ import { environment } from '../../../../../../environments/environment';
   providedIn: 'root',
 })
 export class AlumnosService {
-  
   constructor(private httpClient: HttpClient) {}
 
   getAlumnos(): Observable<IAlumno[]> {
@@ -16,14 +15,22 @@ export class AlumnosService {
   }
 
   createAlumno(payload: ICreateAlumnoPayload) {
-    return this.httpClient.post<IAlumno>(environment.baseAPIURL + '/students', payload);
+    return this.httpClient.post<IAlumno>(
+      environment.baseAPIURL + '/students',
+      payload
+    );
   }
 
   deleteAlumno(id: string) {
-    return this.httpClient.delete<IAlumno>(environment.baseAPIURL + '/students/' + id);
+    return this.httpClient.delete<IAlumno>(
+      environment.baseAPIURL + '/students/' + id
+    );
   }
 
   updateAlumno(id: string, payload: ICreateAlumnoPayload) {
-    return this.httpClient.put<IAlumno>(environment.baseAPIURL + '/students/' + id, payload);
+    return this.httpClient.put<IAlumno>(
+      environment.baseAPIURL + '/students/' + id,
+      payload
+    );
   }
 }

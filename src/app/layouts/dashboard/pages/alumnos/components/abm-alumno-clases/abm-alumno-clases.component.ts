@@ -2,11 +2,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IAlumno } from '../../models';
 import { ClasesService } from '../../../clases/services/clases.service';
-import { forkJoin, Subscription } from 'rxjs';
-import { AuthService } from '../../../../../../core/services/auth.service';
-import { AlumnosService } from '../../services/alumnos.service';
+import { forkJoin, Subscription, Observable } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IClase } from '../../../clases/models';
+import { Store } from '@ngrx/store';
+import { authRolLogin } from '../../../../../../store/auth/auth.selectors';
+import { AlumnoActions } from '../../store/alumno.actions';
+import { selectAlumnoById } from '../../store/alumno.selectors'
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,29 +17,35 @@ import Swal from 'sweetalert2';
   styleUrl: './abm-alumno-clases.component.scss',
 })
 export class AbmAlumnoClasesComponent implements OnInit {
+  alumno: IAlumno | undefined;
   clasesFormatted: string[] = [];
-  isAdmin: boolean = false;
   userData: Subscription = new Subscription();
   clases: IClase[] = [];
   alumnoClasesForm: FormGroup;
+  rolLogin$: Observable<string | null>;
+  alumno$: Observable<IAlumno | undefined>;
+  alumnoSubscription: Subscription = new Subscription();
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public alumno: IAlumno,
+    @Inject(MAT_DIALOG_DATA) public alumnoData: IAlumno,
     public clasesService: ClasesService,
-    private authService: AuthService,
-    private alumnosService: AlumnosService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private store: Store
   ) {
+    this.rolLogin$ = this.store.select(authRolLogin);
+    this.alumno$ = this.store.select(selectAlumnoById(this.alumnoData.id));
     this.alumnoClasesForm = this.formBuilder.group({
       nombre: [''],
     });
   }
 
   ngOnInit(): void {
-    this.userData = this.authService.getUserData().subscribe((userData) => {
-      if (userData.rol === 'ADMIN') {
-        this.isAdmin = true;
-      }
+    // Usar el ID del alumnoData en lugar del this.alumno.id
+    this.alumno$ = this.store.select(selectAlumnoById(this.alumnoData.id));
+
+    // Suscribirse al observable alumno$
+    this.alumnoSubscription = this.alumno$.subscribe((alumno) => {
+      this.alumno = alumno; // Actualizar this.alumno con los datos más recientes
     });
 
     this.cargarClases();
@@ -62,38 +70,36 @@ export class AbmAlumnoClasesComponent implements OnInit {
   }
 
   onDeleteClase(id: string) {
-    this.alumno.clases = this.alumno.clases.filter((claseId) => claseId !== id);
-    this.alumnosService.updateAlumno(this.alumno.id, this.alumno).subscribe({
-      next: (data) => {
-        this.alumno = data;
-      },
-    });
-    this.cargarClasesFormatted();
+    const alumnoActualizado = {
+      ...this.alumno!,
+      clases: this.alumno!.clases.filter((claseId) => claseId !== id),
+    };
+    this.store.dispatch(
+      AlumnoActions.updateAlumno({
+        id: this.alumno!.id,
+        payload: alumnoActualizado,
+      })
+    );
   }
 
   onAgregarClase(): void {
     const claseIdSeleccionada = this.alumnoClasesForm.value.nombre;
 
-    if (!this.alumno.clases.includes(claseIdSeleccionada)) {
+    if (!this.alumno!.clases.includes(claseIdSeleccionada)) {
       const claseSeleccionada = this.clases.find(
         (clase) => clase.id === claseIdSeleccionada
       );
       if (claseSeleccionada) {
-        this.alumno.clases.push(claseIdSeleccionada);
-        this.alumnosService
-          .updateAlumno(this.alumno.id, this.alumno)
-          .subscribe({
-            next: (data) => {
-              this.alumno = data;
-              this.cargarClasesFormatted();
-            },
-            error: (error) => {
-              Swal.fire({
-                title: 'Error al agregar la clase al alumno: ' + error,
-                icon: 'error',
-              });
-            },
-          });
+        const alumnoActualizado = {
+          ...this.alumno!,
+          clases: [...this.alumno!.clases, claseIdSeleccionada],
+        };
+        this.store.dispatch(
+          AlumnoActions.updateAlumno({
+            id: this.alumno!.id,
+            payload: alumnoActualizado,
+          })
+        );
       }
     } else {
       Swal.fire({
