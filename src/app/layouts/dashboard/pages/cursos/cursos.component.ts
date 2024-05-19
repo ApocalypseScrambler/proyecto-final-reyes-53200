@@ -3,12 +3,14 @@ import { ICurso } from './models'
 import { IClase } from '../clases/models';
 import { MatDialog } from '@angular/material/dialog';
 import { AbmCursosComponent } from './components/abm-cursos/abm-cursos.component';
-import { AuthService } from '../../../../core/services/auth.service';
-import { Subscription } from 'rxjs';
+import { map, Observable, combineLatest, filter, take } from 'rxjs';
 import Swal from 'sweetalert2';
-import { CursosService } from './services/cursos.service';
-import { ClasesService } from '../clases/services/clases.service';
-
+import { authRolLogin } from '../../../../store/auth/auth.selectors';
+import { Store } from '@ngrx/store';
+import { ClaseActions } from '../clases/store/clase.actions';
+import { CursoActions } from './store/curso.actions';
+import { selectClases, selectClasesLoading } from '../clases/store/clase.selectors';
+import { selectCursos, selectCursosError } from './store/curso.selectors';
 @Component({
   selector: 'app-cursos',
   templateUrl: './cursos.component.html',
@@ -22,34 +24,27 @@ export class CursosComponent implements OnInit{
     'actions'
   ];
 
-  userData: Subscription =  new Subscription();
-  cursos: ICurso[] = [];
-  clases: IClase[] = [];
-  isAdmin: boolean = false;
+  cursos$: Observable<ICurso[]>;
+  clases$: Observable<IClase[]>;
+  loading$: Observable<boolean>;
+  rolLogin$: Observable<string | null>;
+  error$: Observable<Error>;
 
   constructor(
-    private cursosService: CursosService,
-    private clasesService: ClasesService,
     private matDialog: MatDialog,
-    private authService: AuthService
-  ) {}
-
-  ngOnInit(): void {
-    this.userData = this.authService.getUserData().subscribe((userData) => {
-      if (userData.rol === 'ADMIN') {
-        this.isAdmin = true;
-      }
-    });
-
-    this.getCursos();
+    private store: Store,
+  ) {
+    this.rolLogin$ = this.store.select(authRolLogin);
+    this.clases$ = this.store.select(selectClases);
+    this.loading$ = this.store.select(selectClasesLoading);
+    this.cursos$ = this.store.select(selectCursos);
+    this.error$ = this.store
+      .select(selectCursosError)
+      .pipe(map((err) => err as Error));
   }
 
-  getCursos(): void {
-    this.cursosService.getCursos().subscribe({
-      next: (data) => {
-        this.cursos = data;
-      },
-    });
+  ngOnInit(): void {
+    this.store.dispatch(CursoActions.loadCursos());
   }
 
   openDialog(editingUser?: ICurso): void {
@@ -62,59 +57,55 @@ export class CursosComponent implements OnInit{
         next: (result) => {
           if (result) {
             if (editingUser) {
-              this.cursosService.updateCurso(editingUser.id, result).subscribe({
-                next: (data) => {
-                  this.cursos = this.cursos.map(curso => curso.id === editingUser.id ? data : curso);
-                },
-              });
+              this.store.dispatch(
+                CursoActions.updateCurso({
+                  id: editingUser.id,
+                  payload: result,
+                })
+              );
             } else {
-              this.cursosService.createCurso(result).subscribe({
-                next: (data) => {
-                  this.cursos.push(data);
-                  this.getCursos();
-                },
-                
-              });
+              this.store.dispatch(
+                CursoActions.createCurso({ payload: result })
+              );
             }
           }
-        }
-      })
-  };    
+        },
+      });
+  } 
 
   onDeleteCurso(id: string, nombre: string): void {
-    this.clasesService.getClasesPorCurso(nombre).subscribe((clases) => {
-      if (clases.length > 0) {
-        Swal.fire({
-          title: 'No se puede eliminar el curso',
-          text: 'Hay clases asociadas a este curso. Elimina las clases primero.',
-          icon: 'error',
-        });
-      } else {
-        Swal.fire({
-          title: '¿Está seguro de eliminar el curso?',
-          icon: 'warning',
-          showCancelButton: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.cursosService.deleteCurso(id).subscribe((data) => {
+    this.store.dispatch(ClaseActions.loadClasesPorCurso({ nombre }));
+
+    combineLatest([this.clases$, this.loading$])
+      .pipe(
+        filter(([clases, loading]) => !loading), 
+        take(1), 
+        map(([clases]) => clases) 
+      )
+      .subscribe(clases => {
+        if (clases.length > 0) {
+          Swal.fire({
+            title: 'No se puede eliminar el curso',
+            text: 'Hay clases asociadas a este curso. Elimina las clases primero.',
+            icon: 'error',
+          });
+        } else {
+          Swal.fire({
+            title: '¿Está seguro de eliminar el curso?',
+            icon: 'warning',
+            showCancelButton: true,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.store.dispatch(CursoActions.deleteCurso({ id }));
               Swal.fire({
                 title: 'Curso eliminado',
                 icon: 'success',
               });
-              this.cursos = this.cursos.filter(curso => curso.id !== id);
-            });
-          } else if (result.dismiss === Swal.DismissReason.cancel) {
-            Swal.fire({
-              title: 'Petición Cancelada',
-              icon: 'error',
-            });
-          }
-        });
-      }
-    });
+            }
+          });
+        }
+      });
   }
 
-    ngOnDestroy(): void {
-    this.userData.unsubscribe();
-  }
+
 }

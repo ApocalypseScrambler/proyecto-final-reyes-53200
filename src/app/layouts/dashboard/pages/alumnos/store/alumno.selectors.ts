@@ -12,11 +12,21 @@ export const selectAlumnos = createSelector(
 );
 
 export const selectAlumnoById = (id: string) =>
-  createSelector(selectAlumnos, (alumnos: IAlumno[]) =>
-    alumnos.find((alumno) => alumno.id === id)
+  createSelector(selectAlumnos, 
+    (alumnos: IAlumno[]) => alumnos.find((alumno) => alumno.id === id)
   );
 
-export const selectAlumnosError = createSelector(
+  export const selectAlumnosByClaseId = (claseId: string) => 
+    createSelector(selectAlumnos,
+    (alumnos) => alumnos.filter(alumno => alumno.clases.includes(claseId))
+  );
+
+  export const selectAlumnosError = createSelector(
   selectAlumnoState,
   (state) => state.error
+);
+
+export const selectAlumnosLoading = createSelector(
+  selectAlumnoState,
+  (state) => state.loading
 );

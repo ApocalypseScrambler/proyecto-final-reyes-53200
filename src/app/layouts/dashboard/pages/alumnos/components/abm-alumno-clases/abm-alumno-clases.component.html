@@ -3,13 +3,10 @@
   <form [formGroup]="alumnoClasesForm">
     <div class="row">
       <div>
-      <p><strong>Id:</strong>{{ alumno.id }}</p>
-      <p>
-        <strong>Nombre Completo:</strong>
-        {{ alumno.nombre | nombreCompleto : alumno.apellido }}
-      </p>
-      <p><strong>Edad:</strong> {{ alumno.edad }}</p>
-      <p><strong>Correo:</strong> {{ alumno.correo }}</p>
+        <p><strong>Id:</strong>{{ alumno.id }}</p>
+        <p><strong>Nombre Completo:</strong>{{ alumno.nombre | nombreCompleto:alumno.apellido }}</p>
+        <p><strong>Edad:</strong> {{ alumno.edad }}</p>
+        <p><strong>Correo:</strong> {{ alumno.correo }}</p>
       </div>
       
       <div class="d-flex">
@@ -17,11 +14,8 @@
           <mat-form-field class="selectClases">
             <mat-label>Clases</mat-label>
             <mat-select formControlName="nombre">
-              <mat-option *ngFor="let clase of clases" [value]="clase.id">
-                {{ clase.nombre }} - Fecha:
-                {{ clase.fechaInicio | date : "dd/MM/yyyy" }} -
-                {{ clase.fechaFin | date : "dd/MM/yyyy" }} - Horario:
-                {{ clase.horarioInicio }} - {{ clase.horarioFin }}
+              <mat-option *ngFor="let clase of (clases$ | async)" [value]="clase.id">
+                {{ clase.nombre }} - Fecha: {{ clase.fechaInicio | date:"dd/MM/yyyy" }} - {{ clase.fechaFin | date:"dd/MM/yyyy" }} - Horario: {{ clase.horarioInicio }} - {{ clase.horarioFin }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -37,20 +31,24 @@
           </button>
         </div>
       </div>
-      <ul *ngIf="alumno.clases && alumno.clases.length > 0">
-        <li *ngFor="let clase of clasesFormatted; let i = index">
-          {{ clase }}
-          <button
-            (click)="onDeleteClase(alumno.clases[i])"
-            mat-icon-button
-            color="warn"
-            [disabled]="(rolLogin$ | async) !== 'ADMIN'"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </li>
+      <ul *ngIf="(combinedClases$ | async) as combinedClases; else noClases">
+        <ng-container *ngIf="combinedClases.length > 0; else noClases">
+          <li *ngFor="let clase of combinedClases">
+            {{ clase.formatted }}
+            <button
+              (click)="onDeleteClase(clase.id)"
+              mat-icon-button
+              color="warn"
+              [disabled]="(rolLogin$ | async) !== 'ADMIN'"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </li>
+        </ng-container>
       </ul>
-      <p *ngIf="!alumno.clases || alumno.clases.length === 0">Sin Clases</p>
+      <ng-template #noClases>
+        <p>Sin Clases</p>
+      </ng-template>
     </div>
   </form>
 </div>

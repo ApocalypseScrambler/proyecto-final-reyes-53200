@@ -6,7 +6,7 @@
         <mat-form-field class="w-100 p-2" appearance="fill">
           <mat-label>Nombre</mat-label>
           <mat-select formControlName="nombre">
-            <mat-option *ngFor="let curso of cursos" [value]="curso.nombre">{{ curso.nombre }}</mat-option>
+            <mat-option *ngFor="let curso of (cursos$ | async)" [value]="curso.nombre">{{ curso.nombre }}</mat-option>
           </mat-select>
           <mat-error>{{
             nombreControl?.errors | formFieldValidationErrors

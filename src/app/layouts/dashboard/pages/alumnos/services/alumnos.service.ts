@@ -15,9 +15,10 @@ export class AlumnosService {
   }
 
   createAlumno(payload: ICreateAlumnoPayload) {
+    const payloadWithClases = { ...payload, clases: [] };
     return this.httpClient.post<IAlumno>(
       environment.baseAPIURL + '/students',
-      payload
+      payloadWithClases
     );
   }
 

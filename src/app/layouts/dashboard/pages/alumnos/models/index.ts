@@ -12,5 +12,5 @@ export interface IAlumno {
     apellido: string | null;
     edad: number | null;
     correo: string | null;
-    clases: string[] | null;
+    clases?: string[] | null;
   }

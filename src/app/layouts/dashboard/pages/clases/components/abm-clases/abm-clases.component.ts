@@ -4,17 +4,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IClase } from '../../models';
 import { ICurso } from '../../../cursos/models';
 import {provideNativeDateAdapter} from '@angular/material/core';
-import { CursosService } from '../../../cursos/services/cursos.service';
-
+import { Observable, map } from 'rxjs';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { selectCursos, selectCursosError } from '../../../cursos/store/curso.selectors';
+import { Store } from '@ngrx/store';
+import { CursoActions } from '../../../cursos/store/curso.actions';
 
 const MY_DATE_FORMAT = {
   parse: {
-    dateInput: 'DD/MM/YYYY', // this is how your date will be parsed from Input
+    dateInput: 'DD/MM/YYYY', 
   },
   display: {
-    dateInput: 'DD/MM/YYYY', // this is how your date will get displayed on the Input
+    dateInput: 'DD/MM/YYYY', 
     monthYearLabel: 'MMMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY'
@@ -33,15 +35,20 @@ const MY_DATE_FORMAT = {
 })
 export class AbmClasesComponent implements OnInit{
   claseForm: FormGroup;
-  cursos: ICurso[] = [];
+  cursos$: Observable<ICurso[]>;
+  error$: Observable<Error>;
 
   constructor(
     private formBuilder: FormBuilder,
     private matDialogRef: MatDialogRef<AbmClasesComponent>,
-    private cursosService: CursosService,
+    private store: Store,
     @Inject(MAT_DIALOG_DATA) private editingUser?: IClase
   ) {
-    
+    this.cursos$ = this.store.select(selectCursos);
+    this.error$ = this.store
+      .select(selectCursosError)
+      .pipe(map((err) => err as Error));
+
       this.claseForm = this.formBuilder.group({
       nombre: [
         '',
@@ -71,11 +78,7 @@ export class AbmClasesComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.cursosService.getCursos().subscribe({
-      next: (data) => {
-        this.cursos = data;
-      },
-    });
+    this.store.dispatch(CursoActions.loadCursos());
   }
 
   get nombreControl() {

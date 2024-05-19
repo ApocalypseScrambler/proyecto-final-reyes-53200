@@ -19,7 +19,7 @@
           <mat-form-field class="selectAlumnos">
             <mat-label>Alumnos</mat-label>
             <mat-select formControlName="nombre">
-              <mat-option *ngFor="let alumno of alumnos" [value]="alumno.id">
+              <mat-option *ngFor="let alumno of (this.alumnos$ | async)" [value]="alumno.id">
                 {{ alumno.nombre | nombreCompleto : alumno.apellido }}
               </mat-option>
             </mat-select>
@@ -30,7 +30,7 @@
             (click)="onAgregarAlumno()"
             mat-raised-button
             color="primary"
-            [disabled]="!isAdmin"
+            [disabled]="(rolLogin$ | async) !== 'ADMIN'"
           >
             Agregar Alumno
           </button>
@@ -40,22 +40,26 @@
         <strong>Nombre:</strong>
         {{ clase.nombre }}
       </p>
-      <p><strong>Alumnos Inscriptos: ({{ alumnosInscritos.length }})</strong></p>
-    <ul *ngIf="alumnosInscritos && alumnosInscritos.length > 0">
+      <ul *ngIf="alumnosInscritos$ | async as alumnosInscritos; else noAlumnos">
+        <p><strong>Alumnos Inscriptos: ({{ alumnosInscritos.length }})</strong></p>
         <li *ngFor="let alumno of alumnosInscritos; let i = index">
-            {{ alumno.nombre | nombreCompleto:alumno.apellido }}
+          {{ alumno.nombre | nombreCompleto: alumno.apellido }}
           
-            <button
+          <button
             (click)="onDeleteAlumno(alumno)"
             mat-icon-button
             color="warn"
-            [disabled]="!isAdmin"
+            [disabled]="(rolLogin$ | async) !== 'ADMIN'"
           >
             <mat-icon>delete</mat-icon>
           </button>
         </li>
       </ul>
-      <p *ngIf="!alumnosInscritos || alumnosInscritos.length === 0">Sin Alumnos Inscriptos</p>
+      
+      <ng-template #noAlumnos>
+        <p><strong>Alumnos Inscriptos: (0)</strong></p>
+        <p>Sin Alumnos Inscriptos</p>
+      </ng-template>
     </div>
   </form>
 </div>

@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { IClase } from './models';
 import { MatDialog } from '@angular/material/dialog';
 import { AbmClasesComponent } from './components/abm-clases/abm-clases.component';
-import { AuthService } from '../../../../core/services/auth.service';
-import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
-import { ClasesService } from './services/clases.service';
+import { Store } from '@ngrx/store';
+import { authRolLogin } from '../../../../store/auth/auth.selectors';
+import { ClaseActions } from './store/clase.actions';
 import { AbmClasesAlumnosComponent } from './components/abm-clases-alumnos/abm-clases-alumnos.component';
+import { selectClases, selectClasesLoading, selectClasesError } from './store/clase.selectors';
+import { Observable, map } from 'rxjs';
 @Component({
   selector: 'app-clases',
   templateUrl: './clases.component.html',
@@ -23,33 +25,25 @@ export class ClasesComponent {
     'actions',
   ];
 
-  userData: Subscription = new Subscription();
-  clases: IClase[] = [];
-  isAdmin: boolean = false;
+  clases$: Observable<IClase[]>;
+  loading$: Observable<boolean>;
+  rolLogin$: Observable<string | null>;
+  error$: Observable<Error>;
 
   constructor(
-    private clasesService: ClasesService,
     private matDialog: MatDialog,
-    private authService: AuthService
-  ) {}
-
-  ngOnInit(): void {
-    this.userData = this.authService.getUserData().subscribe((userData) => {
-      if (userData.rol === 'ADMIN') {
-        this.isAdmin = true;
-      }
-    });
-
-    this.getClases();
+    private store: Store,
+  ) {
+    this.rolLogin$ = this.store.select(authRolLogin);
+    this.clases$ = this.store.select(selectClases);
+    this.loading$ = this.store.select(selectClasesLoading);
+    this.error$ = this.store
+      .select(selectClasesError)
+      .pipe(map((err) => err as Error));
   }
 
-  
-  getClases(): void {
-    this.clasesService.getClases().subscribe({
-      next: (data) => {
-        this.clases = data;
-      },
-    });
+  ngOnInit(): void {
+    this.store.dispatch(ClaseActions.loadClases());
   }
 
   openDialog(editingUser?: IClase): void {
@@ -62,23 +56,21 @@ export class ClasesComponent {
         next: (result) => {
           if (result) {
             if (editingUser) {
-              this.clasesService.updateClase(editingUser.id, result).subscribe({
-                next: (data) => {
-                  this.clases = this.clases.map(clase => clase.id === editingUser.id ? data : clase);
-                },
-              });
+              this.store.dispatch(
+                ClaseActions.updateClase({
+                  id: editingUser.id,
+                  payload: result,
+                })
+              );
             } else {
-              this.clasesService.createClase(result).subscribe({
-                next: (data) => {
-                  this.clases.push(data);
-                  this.getClases();
-                },
-              });
+              this.store.dispatch(
+                ClaseActions.createClase({ payload: result })
+              );
             }
           }
-        }
-      })
-  };    
+        },
+      });
+  } 
 
   openDetail(clase: IClase): void {
     this.matDialog.open(AbmClasesAlumnosComponent, {
@@ -93,25 +85,16 @@ export class ClasesComponent {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        this.clasesService.deleteClase(id).subscribe((data) => {
-          Swal.fire({
-            title: 'Clase eliminada',
-            icon: 'success',
-          });
-          this.clases = this.clases.filter(clase => clase.id !== id);
-        });
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        this.store.dispatch(ClaseActions.deleteClase({ id }));
         Swal.fire({
-          title: 'Petición Cancelada',
-          icon: 'error',
+          title: 'Clase eliminada',
+          icon: 'success',
         });
       }
     });
   }
+}
 
   
 
-  ngOnDestroy(): void {
-    this.userData.unsubscribe();
-  }
-}
+  

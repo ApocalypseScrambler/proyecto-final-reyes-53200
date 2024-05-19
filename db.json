@@ -64,7 +64,9 @@
       "apellido": "Gómez",
       "edad": 25,
       "correo": "mariagomez@example.com",
-      "clases": []
+      "clases": [
+        "3"
+      ]
     },
     {
       "id": "3",
@@ -96,8 +98,17 @@
       "correo": "pedromartinez@example.com",
       "clases": [
         "6",
-        "4"
+        "4",
+        "1"
       ]
+    },
+    {
+      "id": "a3bd",
+      "nombre": "asdasd",
+      "apellido": "sasdasd",
+      "edad": "55",
+      "correo": "asdasd@adsda",
+      "clases": []
     }
   ],
   "class": [

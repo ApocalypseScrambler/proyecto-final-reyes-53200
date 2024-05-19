@@ -20,5 +20,9 @@ export const AlumnoActions = createActionGroup({
     'Update Alumno': props<{ id: string; payload: ICreateAlumnoPayload }>(),
     'Update Alumno Success': props<{ data: IAlumno }>(),
     'Update Alumno Failure': props<{ error: HttpErrorResponse }>(),
+
+    'Load Alumnos By Clase': emptyProps(),
+    'Load Alumnos By Clase Success': props<{ data: IAlumno[] }>(),
+    'Load Alumnos By Clase Failure': props<{ error: unknown }>(),
   },
 });

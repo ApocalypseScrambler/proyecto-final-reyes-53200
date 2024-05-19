@@ -6,7 +6,10 @@ import { CursosComponent } from './cursos.component';
 
 import { AbmCursosComponent } from './components/abm-cursos/abm-cursos.component';
 import { SharedModule } from '../../../../shared/shared.module';
-
+import { EffectsModule } from '@ngrx/effects';
+import { CursoEffects } from './store/curso.effects';
+import { StoreModule } from '@ngrx/store';
+import { cursoFeature } from './store/curso.reducer';
 @NgModule({
   declarations: [
     CursosComponent,
@@ -15,7 +18,9 @@ import { SharedModule } from '../../../../shared/shared.module';
   imports: [
     CommonModule,
     CursosRoutingModule,
-    SharedModule
+    SharedModule,
+    StoreModule.forFeature(cursoFeature),
+    EffectsModule.forFeature([CursoEffects])
   ],
   exports: [CursosComponent]
 })
