@@ -60,18 +60,18 @@ export class AlumnoEffects {
     );
   });
 
-  loadAlumnosByClase$ = createEffect(() => {
-    return this.actions$.pipe(
+  // loadAlumnosByClase$ = createEffect(() => {
+  //   return this.actions$.pipe(
 
-      ofType(AlumnoActions.loadAlumnosByClase),
-      concatMap(() =>
+  //     ofType(AlumnoActions.loadAlumnosByClase),
+  //     concatMap(() =>
         
-        this.alumnosService.getAlumnos().pipe(
-          map(data => AlumnoActions.loadAlumnosSuccess({ data })),
-          catchError(error => of(AlumnoActions.loadAlumnosFailure({ error }))))
-      )
-    );
-  });
+  //       this.alumnosService.getAlumnos().pipe(
+  //         map(data => AlumnoActions.loadAlumnosSuccess({ data })),
+  //         catchError(error => of(AlumnoActions.loadAlumnosFailure({ error }))))
+  //     )
+  //   );
+  // });
 
   constructor(
     private actions$: Actions,

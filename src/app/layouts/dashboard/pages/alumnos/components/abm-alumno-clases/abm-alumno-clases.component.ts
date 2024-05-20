@@ -21,12 +21,12 @@ import { ClaseActions } from '../../../clases/store/clase.actions';
 export class AbmAlumnoClasesComponent implements OnInit {
   loading$: Observable<boolean>;
   
-  clasesFormatted$: Observable<string[]> = new Observable<string[]>();
+  clasesFormatted$: Observable<string[]> = of([]);
   alumnoClasesForm: FormGroup;
   rolLogin$: Observable<string | null>;
   alumno$: Observable<IAlumno | undefined>;
   clases$: Observable<IClase[]>;
-  combinedClases$: Observable<{ id: string, formatted: string }[]>;
+  combinedClases$: Observable<{ id: string, formatted: string }[]> = of([]);;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public alumno: IAlumno,
@@ -41,6 +41,15 @@ export class AbmAlumnoClasesComponent implements OnInit {
     this.alumnoClasesForm = this.formBuilder.group({
       nombre: [''],
     });
+    this.updateCombinedClases();
+  }
+
+  ngOnInit(): void {
+    this.alumno$ = this.store.select(selectAlumnoById(this.alumno.id));
+    this.store.dispatch(ClaseActions.loadClases());
+  }
+
+  private updateCombinedClases(): void {
     this.combinedClases$ = this.alumno$.pipe(
       switchMap(alumno => {
         if (alumno && alumno.clases) {
@@ -62,11 +71,6 @@ export class AbmAlumnoClasesComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-    this.alumno$ = this.store.select(selectAlumnoById(this.alumno.id));
-    this.store.dispatch(ClaseActions.loadClases());
-  }
-
   onDeleteClase(id: string): void {
     this.alumno$.pipe(take(1)).subscribe(alumno => {
       if (alumno) {
@@ -78,6 +82,7 @@ export class AbmAlumnoClasesComponent implements OnInit {
           id: alumno.id,
           payload: alumnoActualizado
         }));
+        this.updateCombinedClases();
       }
     });
   }

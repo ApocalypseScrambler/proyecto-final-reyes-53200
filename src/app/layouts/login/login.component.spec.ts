@@ -6,6 +6,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { FormsModule } from '@angular/forms'; 
 import { AuthService } from '../../core/services/auth.service';
 import { of } from 'rxjs';
+import { StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -15,7 +17,17 @@ describe('LoginComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
-      imports: [HttpClientModule, BrowserAnimationsModule, SharedModule, FormsModule] 
+      imports: [
+        HttpClientModule, 
+        BrowserAnimationsModule, 
+        SharedModule, 
+        FormsModule,
+        StoreModule.forRoot({}) 
+      ],
+      providers: [
+        AuthService,
+        provideMockStore(), 
+      ]
     })
     .compileComponents();
     

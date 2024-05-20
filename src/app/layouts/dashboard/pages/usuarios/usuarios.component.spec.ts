@@ -3,6 +3,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from '../../../../shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UsuariosComponent } from './usuarios.component';
+import { StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
+import { EffectsModule } from '@ngrx/effects';
 
 describe('UsuariosComponent', () => {
   let component: UsuariosComponent;
@@ -11,7 +14,8 @@ describe('UsuariosComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [UsuariosComponent],
-      imports: [HttpClientModule, SharedModule, BrowserAnimationsModule] 
+      imports: [HttpClientModule, SharedModule, BrowserAnimationsModule, StoreModule.forRoot({}), EffectsModule.forRoot([])],
+      providers: [provideMockStore()]
     })
     .compileComponents();
     

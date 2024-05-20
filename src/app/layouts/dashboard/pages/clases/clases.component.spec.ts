@@ -3,6 +3,8 @@ import { ClasesComponent } from './clases.component';
 import { HttpClientModule } from '@angular/common/http'; 
 import { SharedModule } from '../../../../shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 
 describe('ClasesComponent', () => {
   let component: ClasesComponent;
@@ -11,7 +13,10 @@ describe('ClasesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ClasesComponent],
-      imports: [HttpClientModule, SharedModule, BrowserAnimationsModule] 
+      imports: [HttpClientModule, SharedModule, BrowserAnimationsModule, StoreModule.forRoot({})],
+      providers: [
+        provideMockStore(), // Proveer el MockStore
+      ]
     })
     .compileComponents();
     

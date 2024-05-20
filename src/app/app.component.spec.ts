@@ -4,6 +4,9 @@ import { AppComponent } from './app.component';
 import { DashboardModule } from './layouts/dashboard/dashboard.module';
 import { HttpClientModule } from '@angular/common/http'; 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
+import { EffectsModule } from '@ngrx/effects';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -12,11 +15,14 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule, DashboardModule, HttpClientModule, BrowserAnimationsModule      
+        RouterTestingModule, DashboardModule, HttpClientModule, BrowserAnimationsModule, StoreModule.forRoot({}), EffectsModule.forRoot([])     
       ],
       declarations: [
         AppComponent
       ],
+      providers: [
+        provideMockStore() 
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);

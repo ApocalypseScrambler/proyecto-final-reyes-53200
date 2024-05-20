@@ -4,6 +4,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from '../../../../../../shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AbmAlumnoClasesComponent } from './abm-alumno-clases.component';
+import { StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 
 describe('AbmAlumnoClasesComponent', () => {
   let component: AbmAlumnoClasesComponent;
@@ -12,10 +14,11 @@ describe('AbmAlumnoClasesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [AbmAlumnoClasesComponent],
-      imports: [MatDialogModule, HttpClientModule, SharedModule, BrowserAnimationsModule],
+      imports: [MatDialogModule, HttpClientModule, SharedModule, BrowserAnimationsModule, StoreModule.forRoot({})],
       providers: [
         { provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: {} }
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+        provideMockStore(),
       ]
     })    
     .compileComponents();

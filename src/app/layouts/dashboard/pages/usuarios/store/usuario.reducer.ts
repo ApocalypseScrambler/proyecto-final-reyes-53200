@@ -123,14 +123,14 @@ on(UsuarioActions.loadUsuarioPorIdSuccess, (state, action) => {
   return {
     ...state,
     loading: false,
-    clase: action.data,
+    usuario: action.data,
   };
 }),
 on(UsuarioActions.loadUsuarioPorIdFailure, (state, action) => {
   return {
     ...state,
     loading: false,
-    clases: action.error,
+    error: action.error,
   };
 })
 
